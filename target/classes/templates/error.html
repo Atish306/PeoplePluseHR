@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Error &bull; PeoplePulse HR</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script th:src="@{/js/theme.js}"></script>
+</head>
+<body class="bg-light">
+
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                    <div class="card-header bg-danger text-white py-4 px-4 d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="bg-white text-danger rounded-circle p-3 d-flex align-items-center justify-content-center shadow-sm" style="width: 54px; height: 54px;">
+                                <i class="bi bi-exclamation-triangle-fill fs-3"></i>
+                            </div>
+                            <div>
+                                <h4 class="mb-0 fw-bold">Endpoint Error Encountered</h4>
+                                <small class="text-white-50">PeoplePulse HR Diagnostic Engine</small>
+                            </div>
+                        </div>
+                        <span class="badge bg-white text-danger px-3 py-2 rounded-pill font-monospace" th:text="${traceId != null ? traceId : 'REQ-ERROR'}">REQ-000000</span>
+                    </div>
+
+                    <div class="card-body p-4">
+                        <p class="text-secondary mb-4">
+                            An unexpected issue occurred while processing this request. The incident has been recorded in the application diagnostic logs with the trace identifier above.
+                        </p>
+
+                        <div class="list-group list-group-flush mb-4 rounded-3 border">
+                            <div class="list-group-item d-flex justify-content-between align-items-center py-3">
+                                <span class="text-secondary"><i class="bi bi-link-45deg me-2 text-primary"></i>Endpoint</span>
+                                <span class="font-monospace fw-semibold" th:text="${endpoint != null ? endpoint : 'Unknown'}">GET /example</span>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between align-items-center py-3">
+                                <span class="text-secondary"><i class="bi bi-bug me-2 text-danger"></i>Exception Type</span>
+                                <span class="font-monospace text-danger small" th:text="${exceptionClass != null ? exceptionClass : 'Exception'}">java.lang.RuntimeException</span>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between align-items-center py-3">
+                                <span class="text-secondary"><i class="bi bi-chat-left-quote me-2 text-warning"></i>Message</span>
+                                <span class="text-break fw-semibold" th:text="${errorMessage != null ? errorMessage : 'No message'}">Error message</span>
+                            </div>
+                            <div class="list-group-item d-flex justify-content-between align-items-center py-3">
+                                <span class="text-secondary"><i class="bi bi-clock-history me-2 text-info"></i>Timestamp</span>
+                                <span class="font-monospace small" th:text="${timestamp != null ? timestamp : 'Now'}">2026-10-31 12:00:00</span>
+                            </div>
+                        </div>
+
+                        <!-- Diagnostic Stack Trace (Collapsible) -->
+                        <div th:if="${stackTrace != null}" class="mb-4">
+                            <button class="btn btn-sm btn-outline-secondary w-100 text-start d-flex justify-content-between align-items-center py-2"
+                                    type="button" data-bs-toggle="collapse" data-bs-target="#stackTraceCollapse">
+                                <span><i class="bi bi-code-slash me-2"></i>Inspect Diagnostic Stack Trace</span>
+                                <i class="bi bi-chevron-down"></i>
+                            </button>
+                            <div class="collapse mt-2" id="stackTraceCollapse">
+                                <div class="bg-dark text-light p-3 rounded-3 font-monospace small" style="max-height: 250px; overflow-y: auto;">
+                                    <pre class="mb-0 text-white-50" style="white-space: pre-wrap;" th:text="${stackTrace}">Stack trace goes here...</pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2 justify-content-end">
+                            <a href="javascript:history.back()" class="btn btn-outline-secondary px-4">
+                                <i class="bi bi-arrow-left me-1"></i> Go Back
+                            </a>
+                            <a href="/dashboard" class="btn btn-primary px-4">
+                                <i class="bi bi-house-door me-1"></i> Return to Dashboard
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shift Schedules &bull; PeoplePulse HR</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script th:src="@{/js/theme.js}"></script>
+</head>
+<body>
+
+    <div class="peoplepulse-wrapper">
+
+        <!-- PeoplePulse HR Admin Sidebar -->
+        <aside class="peoplepulse-sidebar">
+            <div class="peoplepulse-sidebar-brand d-flex align-items-center justify-content-between">
+                <a href="/admin/dashboard" class="d-flex align-items-center text-white text-decoration-none">
+                    <div class="people-plus-logo-icon me-2">
+                        <svg width="32" height="32" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="34" height="34" rx="10" fill="url(#ppLogoGrad)"/>
+                            <rect x="0.5" y="0.5" width="33" height="33" rx="9.5" stroke="rgba(255,255,255,0.15)"/>
+                            <circle cx="13.5" cy="11.5" r="4.2" fill="#ffffff"/>
+                            <path d="M6 25.5C6 21.2 9.3 17.5 13.5 17.5C17.7 17.5 21 21.2 21 25.5H6Z" fill="#ffffff" fill-opacity="0.95"/>
+                            <circle cx="24.5" cy="11" r="6" fill="#ff5e3a"/>
+                            <path d="M24.5 7.8V14.2M21.3 11H27.7" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round"/>
+                            <defs>
+                                <linearGradient id="ppLogoGrad" x1="0" y1="0" x2="34" y2="34" gradientUnits="userSpaceOnUse">
+                                    <stop stop-color="#1b4fc2"/>
+                                    <stop offset="1" stop-color="#0a1a44"/>
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+                    <span class="people-plus-brand">
+                        <span class="brand-word-people">People</span><span class="brand-plus-sign">+</span>
+                        <span class="brand-word-hr">HR</span>
+                    </span>
+                </a>
+                <button type="button" class="btn btn-link text-white-50 p-0 d-lg-none" onclick="toggleSidebar()" aria-label="Close sidebar">
+                    <i class="bi bi-x-lg fs-5"></i>
+                </button>
+            </div>
+
+            <ul class="peoplepulse-nav">
+                <li class="peoplepulse-nav-heading">Administration</li>
+                <li class="peoplepulse-nav-item">
+                    <a href="/admin/dashboard" class="peoplepulse-nav-link">
+                        <i class="bi bi-speedometer2"></i> Overview
+                    </a>
+                </li>
+                <li class="peoplepulse-nav-item">
+                    <a href="/admin/employees" class="peoplepulse-nav-link">
+                        <i class="bi bi-people"></i> Employees & Excel
+                    </a>
+                </li>
+                <li class="peoplepulse-nav-item">
+                    <a href="/admin/shifts" class="peoplepulse-nav-link active">
+                        <i class="bi bi-calendar-range"></i> Shift Roster
+                    </a>
+                </li>
+                <li class="peoplepulse-nav-item">
+                    <a href="/manager/leaves" class="peoplepulse-nav-link">
+                        <i class="bi bi-calendar-check"></i> Leave Review
+                    </a>
+                </li>
+                <li class="peoplepulse-nav-item">
+                    <a href="/holidays" class="peoplepulse-nav-link">
+                        <i class="bi bi-calendar-heart"></i> Holiday Calendar
+                    </a>
+                </li>
+                <li class="peoplepulse-nav-item">
+                    <a href="/reports/summary" class="peoplepulse-nav-link">
+                        <i class="bi bi-file-earmark-spreadsheet"></i> Timesheets
+                    </a>
+                </li>
+            </ul>
+
+            <div class="peoplepulse-sidebar-footer">
+                <div class="peoplepulse-user-badge">
+                    <div class="peoplepulse-avatar" style="background: linear-gradient(135deg, #ef4444, #f97316);">
+                        <span>A</span>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <div class="text-white fw-semibold text-truncate small">Shift Admin</div>
+                        <div class="text-white-50" style="font-size: 0.72rem;">ADMIN DESK</div>
+                    </div>
+                    <form th:action="@{/logout}" method="post" class="m-0">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                        <button type="submit" class="btn btn-link text-white-50 p-1 hover-white" title="Logout">
+                            <i class="bi bi-box-arrow-right fs-5"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="peoplepulse-main">
+
+            <header class="peoplepulse-topbar">
+                <div class="d-flex align-items-center">
+                    <button type="button" class="btn btn-outline-secondary btn-sm d-lg-none me-2" onclick="toggleSidebar()" aria-label="Toggle navigation">
+                        <i class="bi bi-list fs-5"></i>
+                    </button>
+                    <div>
+                        <h5 class="fw-bold mb-0 text-dark">Shift Scheduling & Roster</h5>
+                        <span class="text-muted small d-none d-sm-inline">Configure shift timings, grace periods, and employee allocations</span>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center gap-2 flex-wrap">
+                    <button type="button" class="btn btn-outline-secondary btn-sm rounded-circle theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle theme" title="Toggle Light/Dark Theme">
+                        <i class="bi bi-moon-stars-fill theme-icon-dark"></i>
+                        <i class="bi bi-sun-fill theme-icon-light d-none"></i>
+                    </button>
+                    <button type="button" class="btn btn-primary btn-sm rounded-pill px-3 fw-semibold" data-bs-toggle="modal" data-bs-target="#newShiftModal">
+                        <i class="bi bi-plus-lg me-1"></i> Add Shift
+                    </button>
+                    <a href="/admin/dashboard" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
+                        Dashboard
+                    </a>
+                </div>
+            </header>
+
+            <main class="p-3 p-md-4">
+
+                <!-- Flash Alerts -->
+                <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show rounded-3 border-0 shadow-sm mb-4" role="alert">
+                    <i class="bi bi-check-circle-fill me-2 align-middle"></i>
+                    <span th:text="${successMessage}">Operation successful!</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show rounded-3 border-0 shadow-sm mb-4" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2 align-middle"></i>
+                    <span th:text="${errorMessage}">Error occurred!</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+
+                <!-- Shift Templates Grid -->
+                <div class="row g-3 mb-4">
+                    <div th:each="shift : ${shifts}" class="col-12 col-sm-6 col-lg-4">
+                        <div class="peoplepulse-card h-100 p-3">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h6 class="fw-bold text-dark mb-0" th:text="${shift.name}">General Shift</h6>
+                                <span class="badge bg-light text-primary border">
+                                    Grace: <span th:text="${shift.gracePeriodMinutes}">15</span> min
+                                </span>
+                            </div>
+                            <div class="my-2">
+                                <span class="fs-5 fw-bold text-primary" th:text="${shift.startTime}">09:00</span>
+                                <span class="text-muted mx-2">to</span>
+                                <span class="fs-5 fw-bold text-primary" th:text="${shift.endTime}">18:00</span>
+                            </div>
+                            <div class="text-muted small">
+                                Sign-in after <strong th:text="${shift.startTime.plusMinutes(shift.gracePeriodMinutes)}">09:15</strong> is flagged as <code>LATE</code>.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Staff Shift Roster Table -->
+                <div class="peoplepulse-card">
+                    <div class="peoplepulse-card-header">
+                        <h6><i class="bi bi-person-lines-fill me-2 text-primary"></i>Staff Roster Allocation</h6>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table peoplepulse-table table-mobile-card align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Employee</th>
+                                    <th>Role</th>
+                                    <th>Department</th>
+                                    <th>Current Shift</th>
+                                    <th>Assign Shift</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="u : ${users}">
+                                    <td data-label="Employee">
+                                        <div class="fw-bold text-dark" th:text="${u.fullName}">Alex Smith</div>
+                                        <div class="text-muted small" th:text="${u.email}">alex@company.com</div>
+                                    </td>
+                                    <td data-label="Role"><span class="badge bg-light text-dark border" th:text="${u.role}">ROLE_EMPLOYEE</span></td>
+                                    <td data-label="Department" th:text="${u.department != null ? u.department.name : '-'}">IT</td>
+                                    <td data-label="Current Shift">
+                                        <span class="badge badge-peoplepulse badge-halfday" th:text="${u.shift != null ? u.shift.name : 'Unassigned'}">
+                                            General Shift
+                                        </span>
+                                    </td>
+                                    <td data-label="Assign Shift">
+                                        <form th:action="@{/admin/shifts/assign}" method="post" class="d-flex gap-2 align-items-center">
+                                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                            <input type="hidden" name="userId" th:value="${u.id}"/>
+                                            <select name="shiftId" class="form-select form-select-sm" style="max-width: 170px;" required>
+                                                <option th:each="s : ${shifts}"
+                                                        th:value="${s.id}"
+                                                        th:text="${s.name + ' (' + s.startTime + ' - ' + s.endTime + ')'}"
+                                                        th:selected="${u.shift != null and u.shift.id == s.id}">
+                                                </option>
+                                            </select>
+                                            <button type="submit" class="btn btn-outline-primary btn-sm rounded-pill px-3">Update</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- Create Shift Modal -->
+    <div class="modal fade" id="newShiftModal" tabindex="-1" aria-labelledby="newShiftModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content rounded-4 border-0">
+                <form th:action="@{/admin/shifts/create}" method="post">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <div class="modal-header border-0 pb-0">
+                        <h5 class="modal-title fw-bold" id="newShiftModalLabel">Create Shift Schedule</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="name" class="form-label small fw-semibold">Shift Name</label>
+                            <input type="text" id="name" name="name" class="form-control" placeholder="e.g. Evening Shift" required>
+                        </div>
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label for="startTime" class="form-label small fw-semibold">Start Time</label>
+                                <input type="time" id="startTime" name="startTime" class="form-control" value="14:00" required>
+                            </div>
+                            <div class="col-6">
+                                <label for="endTime" class="form-label small fw-semibold">End Time</label>
+                                <input type="time" id="endTime" name="endTime" class="form-control" value="22:00" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="gracePeriodMinutes" class="form-label small fw-semibold">Grace Period (Minutes)</label>
+                            <input type="number" id="gracePeriodMinutes" name="gracePeriodMinutes" class="form-control" value="15" min="0" max="60" required>
+                            <div class="form-text small">Minutes past start time allowed before marking status LATE.</div>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0 pt-0">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-peoplepulse-punch fw-semibold px-4" style="width: auto;">Create Shift</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/responsive.js}"></script>
+</body>
+</html>

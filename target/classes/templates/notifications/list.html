@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Notifications &bull; PeoplePulse HR</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script th:src="@{/js/theme.js}"></script>
+</head>
+<body>
+
+    <div class="peoplepulse-wrapper">
+
+        <!-- Sidebar -->
+        <aside class="peoplepulse-sidebar">
+            <div class="peoplepulse-sidebar-brand d-flex align-items-center justify-content-between">
+                <a href="/dashboard" class="d-flex align-items-center text-white text-decoration-none">
+                    <div class="people-plus-logo-icon me-2">
+                        <svg width="32" height="32" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="34" height="34" rx="10" fill="url(#ppLogoGrad)"/>
+                            <rect x="0.5" y="0.5" width="33" height="33" rx="9.5" stroke="rgba(255,255,255,0.15)"/>
+                            <circle cx="13.5" cy="11.5" r="4.2" fill="#ffffff"/>
+                            <path d="M6 25.5C6 21.2 9.3 17.5 13.5 17.5C17.7 17.5 21 21.2 21 25.5H6Z" fill="#ffffff" fill-opacity="0.95"/>
+                            <circle cx="24.5" cy="11" r="6" fill="#ff5e3a"/>
+                            <path d="M24.5 7.8V14.2M21.3 11H27.7" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round"/>
+                            <defs>
+                                <linearGradient id="ppLogoGrad" x1="0" y1="0" x2="34" y2="34" gradientUnits="userSpaceOnUse">
+                                    <stop stop-color="#1b4fc2"/>
+                                    <stop offset="1" stop-color="#0a1a44"/>
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+                    <span class="people-plus-brand">
+                        <span class="brand-word-people">People</span><span class="brand-plus-sign">+</span>
+                        <span class="brand-word-hr">HR</span>
+                    </span>
+                </a>
+                <button type="button" class="btn btn-link text-white-50 p-0 d-lg-none" onclick="toggleSidebar()" aria-label="Close sidebar">
+                    <i class="bi bi-x-lg fs-5"></i>
+                </button>
+            </div>
+
+            <ul class="peoplepulse-nav">
+                <li class="peoplepulse-nav-heading">Workspace</li>
+                <li class="peoplepulse-nav-item">
+                    <a href="/dashboard" class="peoplepulse-nav-link">
+                        <i class="bi bi-grid-1x2"></i> Dashboard
+                    </a>
+                </li>
+                <li class="peoplepulse-nav-item">
+                    <a href="/notifications" class="peoplepulse-nav-link active">
+                        <i class="bi bi-bell"></i> Notifications
+                    </a>
+                </li>
+                <li class="peoplepulse-nav-item">
+                    <a href="/attendance/history" class="peoplepulse-nav-link">
+                        <i class="bi bi-calendar3"></i> Attendance Log
+                    </a>
+                </li>
+
+                <li class="peoplepulse-nav-heading">Time & Leave</li>
+                <li class="peoplepulse-nav-item">
+                    <a href="/leaves/apply" class="peoplepulse-nav-link">
+                        <i class="bi bi-calendar-plus"></i> Leave Balances
+                    </a>
+                </li>
+                <li class="peoplepulse-nav-item">
+                    <a href="/holidays" class="peoplepulse-nav-link">
+                        <i class="bi bi-calendar-heart"></i> Holiday Calendar
+                    </a>
+                </li>
+            </ul>
+
+            <div class="peoplepulse-sidebar-footer">
+                <div class="peoplepulse-user-badge">
+                    <div class="peoplepulse-avatar">
+                        <span th:text="${#strings.substring(currentUser.fullName, 0, 1)}">A</span>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <div class="text-white fw-semibold text-truncate small" th:text="${currentUser.fullName}">Alex Smith</div>
+                        <div class="text-white-50" style="font-size: 0.72rem;" th:text="${currentUser.role.name().replace('ROLE_', '')}">EMPLOYEE</div>
+                    </div>
+                    <form th:action="@{/logout}" method="post" class="m-0">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                        <button type="submit" class="btn btn-link text-white-50 p-1 hover-white" title="Logout">
+                            <i class="bi bi-box-arrow-right fs-5"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="peoplepulse-main">
+
+            <header class="peoplepulse-topbar">
+                <div class="d-flex align-items-center">
+                    <button type="button" class="btn btn-outline-secondary btn-sm d-lg-none me-2" onclick="toggleSidebar()" aria-label="Toggle navigation">
+                        <i class="bi bi-list fs-5"></i>
+                    </button>
+                    <div>
+                        <h5 class="fw-bold mb-0 text-dark">Notifications & Alerts</h5>
+                        <span class="text-muted small">Real-time status updates on leave approvals and notices</span>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <button type="button" class="btn btn-outline-secondary btn-sm rounded-pill px-3" onclick="markAllRead()">
+                        <i class="bi bi-check2-all me-1"></i> Mark All as Read
+                    </button>
+                    <a href="/dashboard" class="btn btn-primary btn-sm rounded-pill px-3 fw-semibold">
+                        <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
+                    </a>
+                </div>
+            </header>
+
+            <main class="p-3 p-md-4">
+                <div class="peoplepulse-card">
+                    <div class="peoplepulse-card-header d-flex justify-content-between align-items-center">
+                        <h6><i class="bi bi-bell-fill me-2 text-primary"></i>Activity & Status Notifications</h6>
+                        <span class="badge bg-light text-secondary border" th:text="${#lists.size(notifications)} + ' total'">0 total</span>
+                    </div>
+
+                    <div class="p-3">
+                        <div th:each="n : ${notifications}" class="p-3 mb-3 rounded-3 border transition-all"
+                             th:style="${n.readStatus} ? 'background: #fafafa; border-color: #eee;' : 'background: #f0f7ff; border-left: 4px solid #1b4fc2 !important;'">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div class="d-flex align-items-start gap-3">
+                                    <div class="rounded-circle p-2 mt-1"
+                                         th:classappend="${n.title.contains('Approved')} ? 'bg-success bg-opacity-10 text-success' : (${n.title.contains('Rejected')} ? 'bg-danger bg-opacity-10 text-danger' : 'bg-primary bg-opacity-10 text-primary')">
+                                        <i class="bi fs-5"
+                                           th:classappend="${n.title.contains('Approved')} ? 'bi-check-circle-fill' : (${n.title.contains('Rejected')} ? 'bi-x-circle-fill' : 'bi-bell-fill')"></i>
+                                    </div>
+                                    <div>
+                                        <h6 class="fw-bold text-dark mb-1" th:text="${n.title}">Notification Title</h6>
+                                        <p class="text-muted small mb-1" th:text="${n.message}">Notification message detail...</p>
+                                        <span class="text-muted" style="font-size: 0.72rem;">
+                                            <i class="bi bi-clock me-1"></i>
+                                            <span th:text="${#temporals.format(n.createdAt, 'dd MMM yyyy, hh:mm a')}">01 Nov 2026, 05:00 PM</span>
+                                        </span>
+                                    </div>
+                                </div>
+                                <span th:if="${!n.readStatus}" class="badge bg-primary rounded-pill small">New</span>
+                            </div>
+                        </div>
+
+                        <div th:if="${#lists.isEmpty(notifications)}" class="text-center py-5 text-muted">
+                            <i class="bi bi-bell-slash fs-1 text-muted d-block mb-2"></i>
+                            <h6 class="fw-bold">No notifications yet</h6>
+                            <p class="small mb-0">When your leave requests are approved or updated, alerts will appear here.</p>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/responsive.js}"></script>
+    <script>
+        function markAllRead() {
+            fetch('/api/notifications/mark-all-read', { method: 'POST' })
+                .then(r => r.json())
+                .then(() => window.location.reload())
+                .catch(e => console.error(e));
+        }
+    </script>
+</body>
+</html>

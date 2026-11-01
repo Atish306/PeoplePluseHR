@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Official Timesheet Slip &bull; PeoplePulse HR</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script th:src="@{/js/theme.js}"></script>
+    <style>
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            body {
+                background: #ffffff !important;
+                padding: 0;
+            }
+            .slip-card {
+                border: 1px solid #ccc !important;
+                box-shadow: none !important;
+            }
+        }
+        .slip-card {
+            max-width: 800px;
+            margin: 2rem auto;
+            background: #ffffff;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+            padding: 2.5rem;
+        }
+        @media (max-width: 575.98px) {
+            .slip-card {
+                margin: 1rem 0.5rem !important;
+                padding: 1.25rem !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-light">
+
+    <!-- Action Bar (Hidden when printing) -->
+    <div class="container no-print mt-4 mb-2 d-flex justify-content-center align-items-center gap-2">
+        <a href="/reports/summary" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
+            <i class="bi bi-arrow-left me-1"></i> Back to Timesheet List
+        </a>
+        <button type="button" class="btn btn-outline-secondary btn-sm rounded-circle theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle theme" title="Toggle Light/Dark Theme">
+            <i class="bi bi-moon-stars-fill theme-icon-dark"></i>
+            <i class="bi bi-sun-fill theme-icon-light d-none"></i>
+        </button>
+        <button onclick="window.print()" class="btn btn-primary btn-sm rounded-pill px-4 shadow-sm fw-semibold">
+            <i class="bi bi-printer me-1"></i> Print / Save as PDF
+        </button>
+    </div>
+
+    <!-- Official Printable Timesheet Slip -->
+    <div class="slip-card">
+        
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-center pb-4 mb-4 border-bottom flex-wrap gap-2">
+            <div class="d-flex align-items-center">
+                <div class="people-plus-logo-icon me-3" style="width: 44px; height: 44px;">
+                    <svg width="44" height="44" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="34" height="34" rx="10" fill="url(#ppLogoGrad)"/>
+                        <rect x="0.5" y="0.5" width="33" height="33" rx="9.5" stroke="rgba(255,255,255,0.15)"/>
+                        <circle cx="13.5" cy="11.5" r="4.2" fill="#ffffff"/>
+                        <path d="M6 25.5C6 21.2 9.3 17.5 13.5 17.5C17.7 17.5 21 21.2 21 25.5H6Z" fill="#ffffff" fill-opacity="0.95"/>
+                        <circle cx="24.5" cy="11" r="6" fill="#ff5e3a"/>
+                        <path d="M24.5 7.8V14.2M21.3 11H27.7" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round"/>
+                        <defs>
+                            <linearGradient id="ppLogoGrad" x1="0" y1="0" x2="34" y2="34" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#1b4fc2"/>
+                                <stop offset="1" stop-color="#0a1a44"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+                <div>
+                    <div class="people-plus-brand brand-light" style="font-size: 1.35rem;">
+                        <span class="brand-word-people" style="font-size: 1.35rem;">People</span><span class="brand-plus-sign" style="font-size: 1.45rem;">+</span>
+                        <span class="brand-word-hr" style="font-size: 0.8rem;">HR</span>
+                    </div>
+                    <span class="text-muted small d-block">Official Employee Attendance &bull; Work Time Slip</span>
+                </div>
+            </div>
+            <div class="text-end">
+                <span class="badge bg-light text-dark border px-3 py-2">
+                    Record ID: <strong th:text="${'#AT-' + record.id}">#AT-101</strong>
+                </span>
+                <div class="text-muted small mt-1">Generated: <span th:text="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd HH:mm')}">2026-10-25</span></div>
+            </div>
+        </div>
+
+        <!-- Employee Credentials Grid -->
+        <div class="row g-3 p-3 bg-light rounded-3 border mb-4">
+            <div class="col-sm-6">
+                <span class="text-muted small text-uppercase fw-semibold d-block">Employee Name</span>
+                <h5 class="fw-bold text-dark mb-1" th:text="${record.user.fullName}">Alex Smith</h5>
+                <span class="text-secondary small" th:text="${record.user.email}">alex@company.com</span>
+            </div>
+            <div class="col-sm-3 col-6">
+                <span class="text-muted small text-uppercase fw-semibold d-block">Department</span>
+                <strong class="text-dark" th:text="${record.user.department != null ? record.user.department.name : 'General'}">Information Technology</strong>
+            </div>
+            <div class="col-sm-3 col-6">
+                <span class="text-muted small text-uppercase fw-semibold d-block">Work Shift</span>
+                <strong class="text-primary" th:text="${record.user.shift != null ? record.user.shift.name : 'General Shift'}">General Shift</strong>
+            </div>
+        </div>
+
+        <!-- Timesheet Details Table -->
+        <h6 class="fw-bold text-dark mb-3"><i class="bi bi-calendar-check me-2 text-primary"></i>Daily Attendance Audit Record</h6>
+        <div class="table-responsive mb-4">
+            <table class="table table-bordered table-mobile-card align-middle">
+                <thead class="table-light small">
+                    <tr>
+                        <th>Work Date</th>
+                        <th>Clock In</th>
+                        <th>Clock Out</th>
+                        <th>Total Hours</th>
+                        <th>Status</th>
+                        <th>Target Variance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td data-label="Work Date" class="fw-bold text-dark" th:text="${record.workDate}">2026-10-25</td>
+                        <td data-label="Clock In">
+                            <strong th:text="${record.punchInTime != null ? #temporals.format(record.punchInTime, 'hh:mm a') : '--'}">09:05 AM</strong>
+                        </td>
+                        <td data-label="Clock Out">
+                            <strong th:text="${record.punchOutTime != null ? #temporals.format(record.punchOutTime, 'hh:mm a') : 'In Progress'}">06:02 PM</strong>
+                        </td>
+                        <td data-label="Total Hours">
+                            <span class="fs-6 fw-bold text-primary"><span th:text="${record.totalHours}">8.95</span> hrs</span>
+                        </td>
+                        <td data-label="Status">
+                            <span th:if="${record.status.name() == 'PRESENT'}" class="badge bg-success">PRESENT (On-Time)</span>
+                            <span th:if="${record.status.name() == 'LATE'}" class="badge bg-warning text-dark">LATE ARRIVAL</span>
+                            <span th:if="${record.status.name() == 'HALF_DAY'}" class="badge bg-info text-dark">HALF DAY</span>
+                            <span th:if="${record.status.name() == 'ABSENT'}" class="badge bg-danger">ABSENT</span>
+                            <span th:if="${record.status.name() == 'ON_LEAVE'}" class="badge bg-secondary">ON LEAVE</span>
+                        </td>
+                        <td data-label="Target Variance">
+                            <span th:if="${varianceHours >= 0}" class="text-success fw-bold">
+                                +<span th:text="${varianceHours}">0.95</span> hrs (Overtime)
+                            </span>
+                            <span th:if="${varianceHours < 0}" class="text-danger fw-bold">
+                                <span th:text="${varianceHours}">-1.50</span> hrs (Deficit)
+                            </span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Audit & Verification Evidence -->
+        <div class="card border-0 bg-light p-3 rounded-3 mb-4">
+            <h6 class="fw-semibold text-dark mb-2" style="font-size: 0.85rem;"><i class="bi bi-shield-check text-success me-1"></i>System Verification & Geolocation Evidence</h6>
+            <div class="row g-2 small text-secondary">
+                <div class="col-sm-4">
+                    <strong>GPS Coordinates:</strong>
+                    <div th:if="${record.inLatitude != null}">
+                        <i class="bi bi-geo-alt-fill text-danger me-1"></i>
+                        <span th:text="${record.inLatitude + ', ' + record.inLongitude}">28.61, 77.20</span>
+                    </div>
+                    <div th:if="${record.inLatitude == null}">Not captured / Offline</div>
+                </div>
+                <div class="col-sm-4">
+                    <strong>Origin IP Address:</strong>
+                    <div th:text="${record.ipAddress != null ? record.ipAddress : '127.0.0.1'}">127.0.0.1</div>
+                </div>
+                <div class="col-sm-4">
+                    <strong>Log Remarks:</strong>
+                    <div th:text="${record.notes != null ? record.notes : '-'}">Punched in on time</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Corporate Signatures -->
+        <div class="row pt-5 mt-4 text-center">
+            <div class="col-4">
+                <div class="border-top pt-2 small text-muted">
+                    <strong>Employee Signature</strong>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="border-top pt-2 small text-muted">
+                    <strong>Department Supervisor</strong>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="border-top pt-2 small text-muted">
+                    <strong>HR / Payroll Officer</strong>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>

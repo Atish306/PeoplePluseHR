@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Muster & Analytics &bull; PeoplePulse HR</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script th:src="@{/js/theme.js}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .muster-calendar-wrapper {
+            width: 100%;
+            overflow: hidden;
+        }
+        .muster-calendar-inner {
+            width: 100%;
+            min-width: 0;
+            max-width: 100%;
+        }
+        .muster-weekdays-grid {
+            display: grid;
+            grid-template-columns: repeat(7, minmax(0, 1fr));
+            gap: 0.35rem;
+            width: 100%;
+        }
+        .muster-weekday-col {
+            background: var(--peoplepulse-input-bg);
+            border: 1px solid var(--peoplepulse-card-border);
+            border-radius: 6px;
+            padding: 0.4rem 0.15rem;
+            text-align: center;
+            font-weight: 700;
+            font-size: 0.72rem;
+            letter-spacing: 0.03em;
+            color: var(--peoplepulse-text-dark);
+            text-transform: uppercase;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .muster-weekday-col.rest {
+            background: rgba(100, 116, 139, 0.08);
+            color: #64748b;
+            border-color: rgba(100, 116, 139, 0.2);
+        }
+        [data-bs-theme="dark"] .muster-weekday-col.rest {
+            background: rgba(148, 163, 184, 0.08);
+            color: #94a3b8;
+            border-color: rgba(148, 163, 184, 0.2);
+        }
+        .muster-grid {
+            display: grid;
+            grid-template-columns: repeat(7, minmax(0, 1fr));
+            gap: 0.35rem;
+            width: 100%;
+        }
+        .muster-day-card {
+            background: var(--peoplepulse-card-bg);
+            border: 1px solid var(--peoplepulse-card-border);
+            border-radius: 8px;
+            padding: 0.35rem 0.3rem;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 70px;
+            transition: all 0.15s ease;
+            overflow: hidden;
+        }
+        .muster-day-card.empty-slot {
+            background: rgba(148, 163, 184, 0.03);
+            border: 1px dashed rgba(148, 163, 184, 0.22);
+            opacity: 0.45;
+            pointer-events: none;
+            min-height: 70px;
+            border-radius: 8px;
+        }
+        .muster-day-card:hover:not(.empty-slot) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+        }
+        .muster-day-card.today {
+            border: 2px solid var(--peoplepulse-primary) !important;
+            box-shadow: 0 0 0 2px rgba(27, 79, 194, 0.2);
+        }
+        .muster-day-card.rest-card {
+            background: rgba(100, 116, 139, 0.03);
+        }
+        .muster-day-card.holiday-card {
+            background: rgba(59, 130, 246, 0.04);
+            border-color: rgba(59, 130, 246, 0.25);
+        }
+        .muster-day-holiday-marquee {
+            width: 100%;
+            overflow: hidden;
+            background: rgba(59, 130, 246, 0.08);
+            border: 1px solid rgba(59, 130, 246, 0.25);
+            border-radius: 4px;
+            padding: 1px 3px;
+            margin-top: 2px;
+        }
+        [data-bs-theme="dark"] .muster-day-holiday-marquee {
+            background: rgba(59, 130, 246, 0.15);
+            border-color: rgba(59, 130, 246, 0.35);
+        }
+        .muster-day-holiday-marquee marquee {
+            display: block;
+            font-size: 0.62rem;
+            font-weight: 700;
+            color: #1b4fc2;
+            white-space: nowrap;
+            overflow: hidden;
+            line-height: 1.15;
+        }
+        [data-bs-theme="dark"] .muster-day-holiday-marquee marquee {
+            color: #60a5fa;
+        }
+        .muster-day-num {
+            font-size: 0.82rem;
+            font-weight: 700;
+            line-height: 1.1;
+        }
+        .muster-day-dow {
+            font-size: 0.62rem;
+            line-height: 1;
+        }
+        .muster-code-pill {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.68rem;
+            flex-shrink: 0;
+        }
+        .code-pill-p { background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .code-pill-a { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
+        .code-pill-h { background: rgba(59, 130, 246, 0.15); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.3); }
+        .code-pill-r { background: rgba(100, 116, 139, 0.15); color: #64748b; border: 1px solid rgba(100, 116, 139, 0.3); }
+        .code-pill-l { background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); }
+        .code-pill-future { background: rgba(148, 163, 184, 0.1); color: #94a3b8; border: 1px dashed rgba(148, 163, 184, 0.3); }
+        .muster-day-label {
+            font-size: 0.62rem;
+            line-height: 1.15;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: block;
+            max-width: 100%;
+        }
+        .muster-day-badge {
+            font-size: 0.6rem;
+            padding: 0.1rem 0.25rem;
+            line-height: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: inline-block;
+            max-width: 100%;
+        }
+
+        /* Holiday Marquee Banner */
+        .holiday-marquee-banner {
+            background: linear-gradient(90deg, rgba(27, 79, 194, 0.08) 0%, rgba(59, 130, 246, 0.05) 50%, rgba(27, 79, 194, 0.08) 100%);
+            border: 1px solid rgba(27, 79, 194, 0.2);
+            border-radius: 10px;
+            padding: 0.5rem 0.85rem;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+        }
+        [data-bs-theme="dark"] .holiday-marquee-banner {
+            background: linear-gradient(90deg, rgba(59, 130, 246, 0.12) 0%, rgba(30, 58, 138, 0.18) 50%, rgba(59, 130, 246, 0.12) 100%);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+        .holiday-marquee-badge {
+            background: var(--peoplepulse-primary, #1b4fc2);
+            color: #ffffff;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            padding: 0.25rem 0.65rem;
+            border-radius: 6px;
+            white-space: nowrap;
+            flex-shrink: 0;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            box-shadow: 0 2px 4px rgba(27, 79, 194, 0.25);
+        }
+        .holiday-marquee-track {
+            width: 100%;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        .holiday-marquee-track marquee {
+            display: flex;
+            align-items: center;
+            font-size: 0.82rem;
+            color: var(--peoplepulse-text-dark, #1e293b);
+        }
+        .holiday-marquee-item {
+            display: inline-flex;
+            align-items: center;
+            margin-right: 1.75rem;
+            padding: 0.2rem 0.55rem;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            transition: all 0.15s ease;
+        }
+        [data-bs-theme="dark"] .holiday-marquee-item {
+            background: rgba(30, 41, 59, 0.75);
+            border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        /* Select Field with Blank Space Selected by Default and 5-in-a-box on click */
+        .select-5-container {
+            position: relative;
+            min-height: 38px;
+        }
+        .select-5-field {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: var(--peoplepulse-card-bg);
+            border: 1px solid var(--peoplepulse-card-border);
+            color: var(--peoplepulse-text-dark);
+            border-radius: 8px;
+            font-size: 0.82rem;
+            padding: 0.42rem 0.65rem;
+            cursor: pointer;
+            transition: box-shadow 0.15s ease, border-color 0.15s ease;
+            z-index: 5;
+        }
+        .select-5-field:focus,
+        .select-5-field[size="5"],
+        .select-5-field.is-open {
+            z-index: 1050;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+            border-color: var(--peoplepulse-primary);
+            outline: none;
+            height: auto !important;
+            scrollbar-width: thin;
+        }
+        .select-5-field option {
+            padding: 0.35rem 0.6rem;
+            border-radius: 4px;
+            margin-bottom: 2px;
+            cursor: pointer;
+            transition: background-color 0.1s ease;
+        }
+        .select-5-field option:checked {
+            background: var(--peoplepulse-primary) linear-gradient(0deg, var(--peoplepulse-primary) 0%, var(--peoplepulse-primary) 100%) !important;
+            color: #ffffff !important;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .muster-weekdays-grid, .muster-grid {
+                gap: 0.2rem;
+            }
+            .muster-weekday-col {
+                font-size: 0.65rem;
+                padding: 0.25rem 0.1rem;
+            }
+            .muster-day-card {
+                padding: 0.25rem 0.2rem;
+                min-height: 54px;
+            }
+            .muster-day-num {
+                font-size: 0.72rem;
+            }
+            .muster-code-pill {
+                width: 18px;
+                height: 18px;
+                font-size: 0.6rem;
+            }
+            .muster-day-dow {
+                display: none;
+            }
+            .muster-day-label {
+                font-size: 0.55rem;
+            }
+            .muster-day-badge {
+                font-size: 0.55rem;
+                padding: 0.05rem 0.2rem;
+            }
+        }
+
+        .chart-container-box {
+            position: relative;
+            height: 220px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="peoplepulse-wrapper">
+
+        <!-- PeoplePulse HR Sidebar -->
+        <aside class="peoplepulse-sidebar">
+            <div class="peoplepulse-sidebar-brand d-flex align-items-center justify-content-between">
+                <a th:href="${currentUser.role.name() == 'ROLE_ADMIN' ? '/admin/dashboard' : (currentUser.role.name() == 'ROLE_MANAGER' ? '/manager/dashboard' : '/dashboard')}" class="d-flex align-items-center text-white text-decoration-none">
+                    <div class="people-plus-logo-icon me-2">
+                        <svg width="32" height="32" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="34" height="34" rx="10" fill="url(#ppLogoGrad)"/>
+                            <rect x="0.5" y="0.5" width="33" height="33" rx="9.5" stroke="rgba(255,255,255,0.15)"/>
+                            <circle cx="13.5" cy="11.5" r="4.2" fill="#ffffff"/>
+                            <path d="M6 25.5C6 21.2 9.3 17.5 13.5 17.5C17.7 17.5 21 21.2 21 25.5H6Z" fill="#ffffff" fill-opacity="0.95"/>
+                            <circle cx="24.5" cy="11" r="6" fill="#ff5e3a"/>
+                            <path d="M24.5 7.8V14.2M21.3 11H27.7" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round"/>
+                            <defs>
+                                <linearGradient id="ppLogoGrad" x1="0" y1="0" x2="34" y2="34" gradientUnits="userSpaceOnUse">
+                                    <stop stop-color="#1b4fc2"/>
+                                    <stop offset="1" stop-color="#0a1a44"/>
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+                    <span class="people-plus-brand">
+                        <span class="brand-word-people">People</span><span class="brand-plus-sign">+</span>
+                        <span class="brand-word-hr">HR</span>
+                    </span>
+                </a>
+                <button type="button" class="btn btn-link text-white-50 p-0 d-lg-none" onclick="toggleSidebar()" aria-label="Close sidebar">
+                    <i class="bi bi-x-lg fs-5"></i>
+                </button>
+            </div>
+
+            <ul class="peoplepulse-nav">
+                <li class="peoplepulse-nav-heading">Workspace</li>
+                <li class="peoplepulse-nav-item" th:if="${currentUser.role.name() == 'ROLE_EMPLOYEE'}">
+                    <a href="/dashboard" class="peoplepulse-nav-link">
+                        <i class="bi bi-grid-1x2"></i> Dashboard
+                    </a>
+                </li>
+                <li class="peoplepulse-nav-item" th:if="${currentUser.role.name() == 'ROLE_ADMIN'}">
+                    <a href="/admin/dashboard" class="peoplepulse-nav-link">
+                        <i class="bi bi-speedometer2"></i> Overview
+                    </a>
+                </li>
+                <li class="peoplepulse-nav-item" th:if="${currentUser.role.name() == 'ROLE_MANAGER'}">
+                    <a href="/manager/dashboard" class="peoplepulse-nav-link">
+                        <i class="bi bi-speedometer2"></i> Team Overview
+                    </a>
+                </li>
+                <li class="peoplepulse-nav-item">
+                    <a href="/attendance/history" class="peoplepulse-nav-link active">
+                        <i class="bi bi-calendar3"></i> Attendance Log
+                    </a>
+                </li>
+
+                <li class="peoplepulse-nav-heading">Time & Leave</li>
+                <li class="peoplepulse-nav-item" th:if="${currentUser.role.name() == 'ROLE_EMPLOYEE'}">
+                    <a href="/leaves/apply" class="peoplepulse-nav-link">
+                        <i class="bi bi-calendar-plus"></i> Apply Leave
+                    </a>
+                </li>
+                <li class="peoplepulse-nav-item" th:if="${currentUser.role.name() != 'ROLE_EMPLOYEE'}">
+                    <a href="/manager/leaves" class="peoplepulse-nav-link">
+                        <i class="bi bi-calendar-check"></i> Leave Review
+                    </a>
+                </li>
+                <li class="peoplepulse-nav-item">
+                    <a href="/holidays" class="peoplepulse-nav-link">
+                        <i class="bi bi-calendar-heart"></i> Holiday Calendar
+                    </a>
+                </li>
+                <li class="peoplepulse-nav-item" th:if="${currentUser.role.name() == 'ROLE_ADMIN'}">
+                    <a href="/admin/shifts" class="peoplepulse-nav-link">
+                        <i class="bi bi-calendar-range"></i> Shift Roster
+                    </a>
+                </li>
+                <li class="peoplepulse-nav-item">
+                    <a href="/reports/summary" class="peoplepulse-nav-link">
+                        <i class="bi bi-file-earmark-spreadsheet"></i> Timesheets
+                    </a>
+                </li>
+            </ul>
+
+            <div class="peoplepulse-sidebar-footer">
+                <div class="peoplepulse-user-badge">
+                    <div class="peoplepulse-avatar">
+                        <span th:text="${#strings.substring(currentUser.fullName, 0, 1)}">A</span>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <div class="text-white fw-semibold text-truncate small" th:text="${currentUser.fullName}">Alex Smith</div>
+                        <div class="text-white-50" style="font-size: 0.72rem;" th:text="${currentUser.role.name().replace('ROLE_', '')}">EMPLOYEE</div>
+                    </div>
+                    <form th:action="@{/logout}" method="post" class="m-0">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                        <button type="submit" class="btn btn-link text-white-50 p-1 hover-white" title="Logout">
+                            <i class="bi bi-box-arrow-right fs-5"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="peoplepulse-main">
+
+            <header class="peoplepulse-topbar">
+                <div class="d-flex align-items-center">
+                    <button type="button" class="btn btn-outline-secondary btn-sm d-lg-none me-2" onclick="toggleSidebar()" aria-label="Toggle navigation">
+                        <i class="bi bi-list fs-5"></i>
+                    </button>
+                    <div>
+                        <h5 class="fw-bold mb-0 text-dark">Attendance Muster & Day-wise Log</h5>
+                        <span class="text-muted small d-none d-sm-inline">
+                            Monthly attendance analytics, calendar audit grid & punch timestamps &bull; <span th:text="${monthlyMuster.monthName}">October 2026</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <button type="button" class="btn btn-outline-secondary btn-sm rounded-circle theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle theme" title="Toggle Light/Dark Theme">
+                        <i class="bi bi-moon-stars-fill theme-icon-dark"></i>
+                        <i class="bi bi-sun-fill theme-icon-light d-none"></i>
+                    </button>
+                    <a th:href="${currentUser.role.name() == 'ROLE_ADMIN' ? '/admin/dashboard' : (currentUser.role.name() == 'ROLE_MANAGER' ? '/manager/dashboard' : '/dashboard')}" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
+                        <i class="bi bi-arrow-left me-1"></i> <span class="d-none d-sm-inline">Back to </span>Dashboard
+                    </a>
+                </div>
+            </header>
+
+            <main class="p-3 p-md-4">
+
+                <!-- Filter Toolbar: Month, Year, and Optional Employee Switcher (Shows 5 on Click, Blank Selected by Default) -->
+                <div class="peoplepulse-card p-3 mb-4">
+                    <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="badge bg-primary text-white p-2 rounded-2">
+                                <i class="bi bi-funnel-fill"></i>
+                            </span>
+                            <div>
+                                <h6 class="fw-bold mb-0 text-dark">Muster & Attendance Filter</h6>
+                                <span class="text-muted" style="font-size: 0.75rem;">Click any select field to show 5 options; blank space selected by default</span>
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <span class="text-muted small">Viewing: </span>
+                            <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1 fw-bold" th:text="${targetUser.fullName}">Alex Smith</span>
+                            <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle px-2 py-1 ms-1 fw-bold" th:text="${monthlyMuster.monthName}">October 2026</span>
+                        </div>
+                    </div>
+
+                    <form th:action="@{/attendance/history}" method="get" class="row g-3">
+                        
+                        <!-- Month Select Field (Shows 5 on click, blank by default) -->
+                        <div th:class="${currentUser.role.name() != 'ROLE_EMPLOYEE' ? 'col-12 col-md-4' : 'col-12 col-md-6'}">
+                            <label class="form-label small fw-bold text-muted text-uppercase d-flex justify-content-between align-items-center mb-1">
+                                <span><i class="bi bi-calendar3 me-1 text-primary"></i>Month Select</span>
+                                <span class="badge bg-secondary-subtle text-secondary" style="font-size: 0.65rem;">Click to show 5</span>
+                            </label>
+                            <div class="select-5-container">
+                                <select name="month" class="form-select select-5-field"
+                                        onmousedown="openSelect5(this)"
+                                        onfocus="openSelect5(this)"
+                                        onblur="closeSelect5(this)"
+                                        onchange="handleSelect5Change(this)">
+                                    <option value="" selected>&nbsp;</option>
+                                    <option value="1">01 &bull; January</option>
+                                    <option value="2">02 &bull; February</option>
+                                    <option value="3">03 &bull; March</option>
+                                    <option value="4">04 &bull; April</option>
+                                    <option value="5">05 &bull; May</option>
+                                    <option value="6">06 &bull; June</option>
+                                    <option value="7">07 &bull; July</option>
+                                    <option value="8">08 &bull; August</option>
+                                    <option value="9">09 &bull; September</option>
+                                    <option value="10">10 &bull; October</option>
+                                    <option value="11">11 &bull; November</option>
+                                    <option value="12">12 &bull; December</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Year Select Field (Shows 5 on click, blank by default) -->
+                        <div th:class="${currentUser.role.name() != 'ROLE_EMPLOYEE' ? 'col-12 col-md-3' : 'col-12 col-md-6'}">
+                            <label class="form-label small fw-bold text-muted text-uppercase d-flex justify-content-between align-items-center mb-1">
+                                <span><i class="bi bi-calendar-range me-1 text-primary"></i>Year Select</span>
+                                <span class="badge bg-secondary-subtle text-secondary" style="font-size: 0.65rem;">Click to show 5</span>
+                            </label>
+                            <div class="select-5-container">
+                                <select name="year" class="form-select select-5-field"
+                                        onmousedown="openSelect5(this)"
+                                        onfocus="openSelect5(this)"
+                                        onblur="closeSelect5(this)"
+                                        onchange="handleSelect5Change(this)">
+                                    <option value="" selected>&nbsp;</option>
+                                    <option value="2024">2024 (FY 2023-24)</option>
+                                    <option value="2025">2025 (FY 2024-25)</option>
+                                    <option value="2026">2026 (Current Year)</option>
+                                    <option value="2027">2027 (FY 2026-27)</option>
+                                    <option value="2028">2028 (FY 2027-28)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Employee Switcher Field (Shows 5 on click, blank by default) for Admin/Manager -->
+                        <div th:if="${currentUser.role.name() != 'ROLE_EMPLOYEE'}" class="col-12 col-md-5">
+                            <label class="form-label small fw-bold text-muted text-uppercase d-flex justify-content-between align-items-center mb-1">
+                                <span><i class="bi bi-people-fill me-1 text-primary"></i>Employee Switcher</span>
+                                <span class="badge bg-secondary-subtle text-secondary" style="font-size: 0.65rem;">Click to show 5</span>
+                            </label>
+                            <div class="select-5-container">
+                                <select name="userId" class="form-select select-5-field"
+                                        onmousedown="openSelect5(this)"
+                                        onfocus="openSelect5(this)"
+                                        onblur="closeSelect5(this)"
+                                        onchange="handleSelect5Change(this)">
+                                    <option value="" selected>&nbsp;</option>
+                                    <option th:each="emp : ${allEmployees}"
+                                            th:value="${emp.id}"
+                                            th:text="${emp.fullName + ' (' + emp.username + ')'}">
+                                        Alex Smith (employee)
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-12 d-flex justify-content-between align-items-center flex-wrap gap-2 pt-2 border-top">
+                            <span class="text-muted small">
+                                <i class="bi bi-check2-circle text-success me-1"></i>
+                                When you click any select field above, 5 options are displayed. Selecting an option loads the muster immediately.
+                            </span>
+                            <div class="d-flex align-items-center gap-2">
+                                <a th:href="@{/attendance/history}" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
+                                    <i class="bi bi-arrow-counterclockwise me-1"></i>Current Month
+                                </a>
+                                <button type="submit" class="btn btn-primary btn-sm rounded-pill px-3">
+                                    <i class="bi bi-funnel me-1"></i>Apply Filter
+                                </button>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+
+                <!-- Section 1: Monthly Overview & Interactive Pie Chart -->
+                <div class="row g-3 g-md-4 mb-4">
+                    
+                    <!-- Left: Interactive Pie Chart Card -->
+                    <div class="col-lg-5 col-12">
+                        <div class="peoplepulse-card h-100 p-3 p-md-4 d-flex flex-column justify-content-between">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <h6 class="fw-bold mb-0 text-dark">
+                                    <i class="bi bi-pie-chart-fill me-2 text-primary"></i>Attendance Overview
+                                </h6>
+                                <span class="badge bg-light text-primary border px-2 py-1 small" th:text="${monthlyMuster.monthName}">October 2026</span>
+                            </div>
+
+                            <!-- Canvas Pie Chart -->
+                            <div class="chart-container-box my-2">
+                                <canvas id="attendancePieChart"></canvas>
+                            </div>
+
+                            <!-- Custom Chart Legend / Stats Footer -->
+                            <div class="d-flex justify-content-around flex-wrap gap-2 pt-3 border-top text-center" style="font-size: 0.78rem;">
+                                <div>
+                                    <span class="d-inline-block rounded-circle me-1" style="width: 10px; height: 10px; background-color: #10b981;"></span>
+                                    <span class="text-muted">Present (P):</span> <strong class="text-dark" th:text="${monthlyMuster.presentCount}">1</strong>
+                                </div>
+                                <div>
+                                    <span class="d-inline-block rounded-circle me-1" style="width: 10px; height: 10px; background-color: #ef4444;"></span>
+                                    <span class="text-muted">Absent (A):</span> <strong class="text-dark" th:text="${monthlyMuster.absentCount}">0</strong>
+                                </div>
+                                <div>
+                                    <span class="d-inline-block rounded-circle me-1" style="width: 10px; height: 10px; background-color: #3b82f6;"></span>
+                                    <span class="text-muted">Holiday (H):</span> <strong class="text-dark" th:text="${monthlyMuster.holidayCount}">2</strong>
+                                </div>
+                                <div>
+                                    <span class="d-inline-block rounded-circle me-1" style="width: 10px; height: 10px; background-color: #64748b;"></span>
+                                    <span class="text-muted">Rest Day (R):</span> <strong class="text-dark" th:text="${monthlyMuster.restDayCount}">8</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Monthly Attendance KPI Metrics -->
+                    <div class="col-lg-7 col-12">
+                        <div class="row g-3 h-100">
+                            
+                            <!-- Present (P) -->
+                            <div class="col-6 col-sm-6">
+                                <div class="peoplepulse-stat-card h-100">
+                                    <div class="peoplepulse-stat-icon success">
+                                        <i class="bi bi-person-check-fill"></i>
+                                    </div>
+                                    <div>
+                                        <span class="text-muted small fw-semibold text-uppercase">Present Days (P)</span>
+                                        <h3 class="fw-bold text-success mb-0" th:text="${monthlyMuster.presentCount}">1</h3>
+                                        <span class="text-muted" style="font-size: 0.72rem;">Mon-Fri Clocked In</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Absent (A) -->
+                            <div class="col-6 col-sm-6">
+                                <div class="peoplepulse-stat-card h-100">
+                                    <div class="peoplepulse-stat-icon danger">
+                                        <i class="bi bi-person-x-fill"></i>
+                                    </div>
+                                    <div>
+                                        <span class="text-muted small fw-semibold text-uppercase">Absent Days (A)</span>
+                                        <h3 class="fw-bold text-danger mb-0" th:text="${monthlyMuster.absentCount}">0</h3>
+                                        <span class="text-muted" style="font-size: 0.72rem;">Mon-Fri Not Signed In</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Holiday (H) -->
+                            <div class="col-6 col-sm-6">
+                                <div class="peoplepulse-stat-card h-100">
+                                    <div class="peoplepulse-stat-icon primary">
+                                        <i class="bi bi-calendar-heart-fill"></i>
+                                    </div>
+                                    <div>
+                                        <span class="text-muted small fw-semibold text-uppercase">Holidays (H)</span>
+                                        <h3 class="fw-bold text-primary mb-0" th:text="${monthlyMuster.holidayCount}">2</h3>
+                                        <span class="text-muted" style="font-size: 0.72rem;">Official Observances</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Rest Days (R) -->
+                            <div class="col-6 col-sm-6">
+                                <div class="peoplepulse-stat-card h-100">
+                                    <div class="peoplepulse-stat-icon" style="background: rgba(100, 116, 139, 0.15); color: #64748b;">
+                                        <i class="bi bi-cup-hot-fill"></i>
+                                    </div>
+                                    <div>
+                                        <span class="text-muted small fw-semibold text-uppercase">Rest Days (R)</span>
+                                        <h3 class="fw-bold text-secondary mb-0" th:text="${monthlyMuster.restDayCount}">8</h3>
+                                        <span class="text-muted" style="font-size: 0.72rem;">Saturday & Sunday</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Full Working Day Metric Summary -->
+                            <div class="col-12">
+                                <div class="peoplepulse-card p-3">
+                                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                                        <div>
+                                            <span class="text-muted small d-block">Monthly Working Breakdown</span>
+                                            <h6 class="fw-bold text-dark mb-0">
+                                                <span th:text="${monthlyMuster.workingDaysCount}">21</span> Total Working Days &bull; 
+                                                <span class="text-primary" th:text="${monthlyMuster.totalDays}">31</span> Calendar Days
+                                            </h6>
+                                        </div>
+                                        <div class="text-end">
+                                            <span class="badge bg-success-subtle text-success fs-6 px-3 py-2 rounded-pill border border-success-subtle">
+                                                <i class="bi bi-speedometer me-1"></i><span th:text="${monthlyMuster.attendancePercentage + '%'}">100.0%</span> Punctuality
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Holiday Marquee Ticker Strip -->
+                <div class="holiday-marquee-banner mb-4">
+                    <div class="holiday-marquee-badge me-3">
+                        <i class="bi bi-megaphone-fill"></i> HOLIDAYS
+                    </div>
+                    <div class="holiday-marquee-track">
+                        <marquee behavior="scroll" direction="left" scrollamount="5" onmouseover="this.stop();" onmouseout="this.start();">
+                            <th:block th:if="${allHolidays != null and !allHolidays.isEmpty()}">
+                                <span th:each="h : ${allHolidays}" class="holiday-marquee-item">
+                                    <i class="bi bi-calendar-heart-fill text-danger me-1"></i>
+                                    <strong th:text="${h.name}" class="me-1">Diwali</strong>
+                                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle me-1" th:text="${h.formattedDate}">08 Nov 2026</span>
+                                    <span class="text-muted small me-2" th:text="'(' + ${h.dayOfWeek} + ')'">(Sunday)</span>
+                                    <span class="badge bg-secondary-subtle text-secondary" style="font-size: 0.65rem;" th:text="${h.holidayType}">National Holiday</span>
+                                </span>
+                            </th:block>
+                            <th:block th:if="${allHolidays == null or allHolidays.isEmpty()}">
+                                <span class="holiday-marquee-item">
+                                    <i class="bi bi-calendar-check text-primary me-1"></i> <strong>Company Holiday Calendar 2026</strong> &bull; All Official Holidays & Observances
+                                </span>
+                            </th:block>
+                        </marquee>
+                    </div>
+                </div>
+
+                <!-- Section 2: Day-Wise Month Calendar Muster Grid -->
+                <div class="peoplepulse-card mb-4">
+                    <div class="peoplepulse-card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <div>
+                            <h6 class="fw-bold mb-0 text-dark">
+                                <i class="bi bi-calendar2-range me-2 text-primary"></i>Day-wise Attendance Muster &bull; <span th:text="${monthlyMuster.monthName}">October 2026</span>
+                            </h6>
+                            <span class="text-muted small">Daily attendance status per calendar day (No-scroll grid)</span>
+                        </div>
+
+                        <!-- Legend Pills -->
+                        <div class="d-flex align-items-center gap-2 flex-wrap" style="font-size: 0.75rem;">
+                            <span class="badge code-pill-p px-2 py-1"><strong>P</strong> = Present</span>
+                            <span class="badge code-pill-a px-2 py-1"><strong>A</strong> = Absent</span>
+                            <span class="badge code-pill-h px-2 py-1"><strong>H</strong> = Holiday</span>
+                            <span class="badge code-pill-r px-2 py-1"><strong>R</strong> = Rest Day</span>
+                            <span class="badge code-pill-l px-2 py-1"><strong>L</strong> = On Leave</span>
+                        </div>
+                    </div>
+
+                    <div class="peoplepulse-card-body p-3">
+                        <div class="muster-calendar-wrapper">
+                            <div class="muster-calendar-inner">
+
+                                <!-- 7-Column Weekday Headers Starting with Monday -->
+                                <div class="muster-weekdays-grid mb-2">
+                                    <div class="muster-weekday-col">
+                                        <span>Mon</span>
+                                    </div>
+                                    <div class="muster-weekday-col">
+                                        <span>Tue</span>
+                                    </div>
+                                    <div class="muster-weekday-col">
+                                        <span>Wed</span>
+                                    </div>
+                                    <div class="muster-weekday-col">
+                                        <span>Thu</span>
+                                    </div>
+                                    <div class="muster-weekday-col">
+                                        <span>Fri</span>
+                                    </div>
+                                    <div class="muster-weekday-col rest">
+                                        <span>Sat</span>
+                                        <span class="badge bg-secondary-subtle text-secondary ms-1 py-0 px-1" style="font-size: 0.6rem;">Off</span>
+                                    </div>
+                                    <div class="muster-weekday-col rest">
+                                        <span>Sun</span>
+                                        <span class="badge bg-secondary-subtle text-secondary ms-1 py-0 px-1" style="font-size: 0.6rem;">Off</span>
+                                    </div>
+                                </div>
+
+                                <!-- 7-Column Days Grid Aligned to Weekdays -->
+                                <div class="muster-grid">
+
+                                    <!-- Leading empty slots before Day 1 -->
+                                    <th:block th:if="${monthlyMuster.startDayOfWeekOffset > 0}">
+                                        <div th:each="emptyDay : ${#numbers.sequence(1, monthlyMuster.startDayOfWeekOffset)}"
+                                             class="muster-day-card empty-slot"
+                                             aria-hidden="true">
+                                        </div>
+                                    </th:block>
+
+                                    <!-- Calendar Days of the Month -->
+                                    <div th:each="day : ${monthlyMuster.days}" 
+                                         class="muster-day-card"
+                                         th:classappend="${(day.isToday ? 'today ' : '') + (day.code == 'R' ? 'rest-card ' : '') + (day.code == 'H' ? 'holiday-card ' : '')}">
+                                        
+                                        <div class="d-flex justify-content-between align-items-start mb-1">
+                                            <div>
+                                                <div class="text-dark muster-day-num" th:text="${#numbers.formatInteger(day.dayNumber, 2)}">01</div>
+                                                <span class="text-muted muster-day-dow" th:text="${day.dayOfWeekShort}">Mon</span>
+                                            </div>
+                                            
+                                            <!-- Status Code Pill (P, A, H, R, L, -) -->
+                                            <div class="muster-code-pill"
+                                                 th:classappend="${day.code == 'P' ? 'code-pill-p' : (day.code == 'A' ? 'code-pill-a' : (day.code == 'H' ? 'code-pill-h' : (day.code == 'R' ? 'code-pill-r' : (day.code == 'L' ? 'code-pill-l' : 'code-pill-future'))))}"
+                                                 th:title="${day.label + (day.holidayName != null ? ': ' + day.holidayName : '')}">
+                                                <span th:text="${day.code}">P</span>
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <!-- Holiday inside calendar date: Marquee with Holiday Name -->
+                                            <div th:if="${day.code == 'H'}" class="muster-day-holiday-marquee">
+                                                <marquee behavior="scroll" direction="left" scrollamount="2" scrolldelay="60" onmouseover="this.stop();" onmouseout="this.start();">
+                                                    <i class="bi bi-star-fill text-warning me-1" style="font-size: 0.5rem;"></i><span th:text="${day.holidayName != null ? day.holidayName : 'Holiday'}">Diwali</span>
+                                                </marquee>
+                                            </div>
+
+                                            <!-- Rest Day Label -->
+                                            <div th:if="${day.code == 'R'}" class="text-muted muster-day-label">
+                                                Weekly Off
+                                            </div>
+
+                                            <!-- Mon-Fri Present with Punch Times -->
+                                            <div th:if="${day.code == 'P' and day.attendance != null}">
+                                                <span class="badge bg-success-subtle text-success border border-success-subtle muster-day-badge" th:text="${day.attendance.totalHours + 'h'}">8.95h</span>
+                                            </div>
+
+                                            <!-- Mon-Fri Absent -->
+                                            <div th:if="${day.code == 'A'}" class="text-danger muster-day-label">
+                                                Absent
+                                            </div>
+
+                                            <!-- Leave -->
+                                            <div th:if="${day.code == 'L'}" class="text-warning muster-day-label">
+                                                Leave
+                                            </div>
+
+                                            <!-- Future Day -->
+                                            <div th:if="${day.code == '-'}" class="text-muted muster-day-label">
+                                                Upcoming
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                    <!-- Trailing empty slots to complete the final week row -->
+                                    <th:block th:if="${monthlyMuster.trailingOffset > 0}">
+                                        <div th:each="emptyDay : ${#numbers.sequence(1, monthlyMuster.trailingOffset)}"
+                                             class="muster-day-card empty-slot"
+                                             aria-hidden="true">
+                                        </div>
+                                    </th:block>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 3: Detailed Timestamp Log Table -->
+                <div class="peoplepulse-card">
+                    <div class="peoplepulse-card-header">
+                        <h6><i class="bi bi-clock-history me-2 text-primary"></i>Detailed Punch Log Records</h6>
+                        <span class="badge bg-light text-muted border" th:text="${records.size() + ' records logged'}">1 records logged</span>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table peoplepulse-table table-mobile-card align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>First In</th>
+                                    <th>Last Out</th>
+                                    <th>Duration</th>
+                                    <th>Status</th>
+                                    <th>GPS Location</th>
+                                    <th>IP Address</th>
+                                    <th>Notes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="rec : ${records}">
+                                    <td data-label="Date" class="fw-semibold text-dark" th:text="${rec.workDate}">2026-10-25</td>
+                                    <td data-label="First In" th:text="${rec.punchInTime != null ? #temporals.format(rec.punchInTime, 'hh:mm a') : '--'}">09:05 AM</td>
+                                    <td data-label="Last Out" th:text="${rec.punchOutTime != null ? #temporals.format(rec.punchOutTime, 'hh:mm a') : 'In Progress'}">06:02 PM</td>
+                                    <td data-label="Duration"><strong><span th:text="${rec.totalHours}">8.95</span> hrs</strong></td>
+                                    <td data-label="Status">
+                                        <span th:if="${rec.status.name() == 'PRESENT'}" class="badge badge-peoplepulse badge-present">Present</span>
+                                        <span th:if="${rec.status.name() == 'LATE'}" class="badge badge-peoplepulse badge-late">Late In</span>
+                                        <span th:if="${rec.status.name() == 'HALF_DAY'}" class="badge badge-peoplepulse badge-halfday">Half Day</span>
+                                        <span th:if="${rec.status.name() == 'ABSENT'}" class="badge badge-peoplepulse badge-absent">Absent</span>
+                                        <span th:if="${rec.status.name() == 'ON_LEAVE'}" class="badge badge-peoplepulse badge-leave">On Leave</span>
+                                        <span th:if="${rec.status.name() == 'HOLIDAY'}" class="badge badge-peoplepulse badge-holiday" style="background: rgba(59, 130, 246, 0.15); color: #3b82f6;">Holiday</span>
+                                    </td>
+                                    <td data-label="GPS Location" class="small text-muted">
+                                        <span th:if="${rec.inLatitude != null}">
+                                            <i class="bi bi-geo-alt-fill text-danger me-1"></i><span th:text="${rec.inLatitude}">28.61</span>, <span th:text="${rec.inLongitude}">77.20</span>
+                                        </span>
+                                        <span th:if="${rec.inLatitude == null}">-</span>
+                                    </td>
+                                    <td data-label="IP Address" class="small text-muted" th:text="${rec.ipAddress != null ? rec.ipAddress : '-'}">127.0.0.1</td>
+                                    <td data-label="Notes" class="small text-secondary" th:text="${rec.notes != null ? rec.notes : '-'}">Punched in on time</td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(records)}">
+                                    <td colspan="8" class="text-center text-muted py-5">
+                                        <i class="bi bi-calendar-x text-muted fs-2 d-block mb-2"></i>
+                                        No attendance logs found on file.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/responsive.js}"></script>
+
+    <!-- Render Interactive Pie Chart -->
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        document.addEventListener('DOMContentLoaded', function () {
+            const ctx = document.getElementById('attendancePieChart');
+            if (!ctx) return;
+
+            const presentCount = /*[[${monthlyMuster.presentCount}]]*/ 1;
+            const absentCount = /*[[${monthlyMuster.absentCount}]]*/ 0;
+            const holidayCount = /*[[${monthlyMuster.holidayCount}]]*/ 2;
+            const restDayCount = /*[[${monthlyMuster.restDayCount}]]*/ 8;
+            const leaveCount = /*[[${monthlyMuster.leaveCount}]]*/ 0;
+
+            const isDark = document.documentElement.getAttribute('data-bs-theme') === 'dark';
+            const textColor = isDark ? '#cbd5e1' : '#334155';
+
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: [
+                        'Present (P)',
+                        'Absent (A)',
+                        'Holiday (H)',
+                        'Rest Day (R)',
+                        'On Leave (L)'
+                    ],
+                    datasets: [{
+                        data: [presentCount, absentCount, holidayCount, restDayCount, leaveCount],
+                        backgroundColor: [
+                            '#10b981', // Present - Green
+                            '#ef4444', // Absent - Red
+                            '#3b82f6', // Holiday - Blue
+                            '#64748b', // Rest Day - Slate
+                            '#f59e0b'  // Leave - Amber
+                        ],
+                        borderWidth: 2,
+                        borderColor: isDark ? '#1e293b' : '#ffffff',
+                        hoverOffset: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '68%',
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const val = context.parsed;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const pct = total > 0 ? Math.round((val / total) * 100) : 0;
+                                    return ` ${context.label}: ${val} days (${pct}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+        /*]]>*/
+    </script>
+    <!-- Select 5 dropdown expansion helper -->
+    <script>
+        function openSelect5(el) {
+            if (el.size <= 1) {
+                el.size = 5;
+                el.classList.add('is-open');
+            }
+        }
+        function closeSelect5(el) {
+            setTimeout(function() {
+                el.size = 1;
+                el.classList.remove('is-open');
+            }, 180);
+        }
+        function handleSelect5Change(el) {
+            el.size = 1;
+            el.classList.remove('is-open');
+            el.blur();
+            if (el.value) {
+                el.form.submit();
+            }
+        }
+    </script>
+
+    <!-- People+ HR Native Mobile App Bottom Navigation Bar -->
+    <nav class="mobile-app-bottom-nav d-lg-none" aria-label="Mobile Bottom Navigation">
+        <a href="/dashboard#home" class="mobile-nav-item" data-tab="home">
+            <div class="mobile-nav-icon-wrapper">
+                <i class="bi bi-house-door-fill"></i>
+            </div>
+            <span class="mobile-nav-label">Home</span>
+        </a>
+        <a href="/dashboard#action" class="mobile-nav-item" data-tab="action">
+            <div class="mobile-nav-icon-wrapper">
+                <i class="bi bi-lightning-charge-fill"></i>
+                <span class="mobile-nav-badge">!</span>
+            </div>
+            <span class="mobile-nav-label">Action</span>
+        </a>
+        <a href="/attendance/history" class="mobile-nav-item active" data-tab="explore">
+            <div class="mobile-nav-icon-wrapper">
+                <i class="bi bi-compass-fill"></i>
+            </div>
+            <span class="mobile-nav-label">Explore</span>
+        </a>
+        <a href="/dashboard#engage" class="mobile-nav-item" data-tab="engage">
+            <div class="mobile-nav-icon-wrapper">
+                <i class="bi bi-chat-heart-fill"></i>
+                <span class="mobile-nav-dot"></span>
+            </div>
+            <span class="mobile-nav-label">Engage</span>
+        </a>
+    </nav>
+</body>
+</html>

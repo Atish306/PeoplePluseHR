@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo Scheduled &bull; PeoplePulse HR</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script th:src="@{/js/theme.js}"></script>
+    <style>
+        .confirmation-box {
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 16px 45px rgba(15, 23, 42, 0.08);
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+        }
+        [data-bs-theme="dark"] .confirmation-box {
+            background: #1e293b;
+            border-color: #334155;
+            box-shadow: 0 16px 45px rgba(0, 0, 0, 0.4);
+        }
+        .success-hero-header {
+            background: linear-gradient(135deg, #0d1b3e 0%, #173f8d 60%, #1b4fc2 100%);
+            color: #ffffff;
+            position: relative;
+            padding: 40px 30px;
+            text-align: center;
+        }
+        .success-icon-badge {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2.2rem;
+            margin-bottom: 16px;
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.35);
+        }
+        .ref-pill {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 50px;
+            padding: 6px 18px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: monospace;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            color: #ffffff;
+        }
+        .summary-info-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 24px;
+        }
+        [data-bs-theme="dark"] .summary-info-card {
+            background: #0f172a;
+            border-color: #334155;
+        }
+    </style>
+</head>
+<body class="bg-light min-vh-100 d-flex flex-column">
+
+    <!-- Top Navigation -->
+    <nav class="navbar navbar-expand-lg bg-white shadow-sm border-bottom py-2 py-md-3">
+        <div class="container">
+            <a class="navbar-brand fw-bold d-flex align-items-center" href="/">
+                <div class="people-plus-logo-icon me-2">
+                    <svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="34" height="34" rx="10" fill="url(#ppLogoGrad)"/>
+                        <rect x="0.5" y="0.5" width="33" height="33" rx="9.5" stroke="rgba(255,255,255,0.15)"/>
+                        <circle cx="13.5" cy="11.5" r="4.2" fill="#ffffff"/>
+                        <path d="M6 25.5C6 21.2 9.3 17.5 13.5 17.5C17.7 17.5 21 21.2 21 25.5H6Z" fill="#ffffff" fill-opacity="0.95"/>
+                        <circle cx="24.5" cy="11" r="6" fill="#ff5e3a"/>
+                        <path d="M24.5 7.8V14.2M21.3 11H27.7" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round"/>
+                        <defs>
+                            <linearGradient id="ppLogoGrad" x1="0" y1="0" x2="34" y2="34" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#1b4fc2"/>
+                                <stop offset="1" stop-color="#0a1a44"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+                <span class="people-plus-brand brand-light">
+                    <span class="brand-word-people">People</span><span class="brand-plus-sign">+</span>
+                    <span class="brand-word-hr">HR</span>
+                </span>
+            </a>
+            <div class="d-flex align-items-center gap-2">
+                <button type="button" class="btn btn-outline-secondary btn-sm rounded-circle theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle theme">
+                    <i class="bi bi-moon-stars-fill theme-icon-dark"></i>
+                    <i class="bi bi-sun-fill theme-icon-light d-none"></i>
+                </button>
+                <a href="/" class="btn btn-outline-secondary btn-sm">Home</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <main class="container my-5 flex-grow-1">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-xl-7">
+                <div class="confirmation-box">
+                    
+                    <!-- Header -->
+                    <div class="success-hero-header">
+                        <div class="success-icon-badge">
+                            <i class="bi bi-check-lg"></i>
+                        </div>
+                        <h2 class="fw-bold mb-2">Your Demo Walkthrough is Confirmed!</h2>
+                        <p class="text-white-50 mb-3 small">
+                            We have reserved your slot. An email confirmation has been sent to <strong class="text-white" th:text="${booking.workEmail}">prospect@company.com</strong>.
+                        </p>
+                        <div class="ref-pill">
+                            <i class="bi bi-tag-fill text-warning"></i>
+                            <span th:text="${booking.bookingReference}">DEMO-2610-8472</span>
+                        </div>
+                    </div>
+
+                    <!-- Body -->
+                    <div class="p-4 p-md-5">
+                        
+                        <!-- Summary Card -->
+                        <div class="summary-info-card mb-4">
+                            <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
+                                <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-calendar2-check-fill text-primary me-2"></i>Scheduled Appointment</h6>
+                                <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1">Confirmed Lead</span>
+                            </div>
+
+                            <div class="row g-3 small">
+                                <div class="col-sm-6">
+                                    <span class="text-muted d-block">Prospect Name:</span>
+                                    <strong class="text-dark fs-6" th:text="${booking.fullName}">John Smith</strong>
+                                    <span class="text-muted d-block" th:if="${booking.jobTitle}" th:text="${booking.jobTitle}">HR Director</span>
+                                </div>
+                                <div class="col-sm-6">
+                                    <span class="text-muted d-block">Organisation:</span>
+                                    <strong class="text-dark fs-6" th:text="${booking.companyName}">Acme Technologies</strong>
+                                    <span class="text-muted d-block">
+                                        <span th:if="${booking.country}" th:text="${booking.country + ' &bull; '}">India &bull; </span>
+                                        <span th:text="${booking.companySize + ' employees'}">51 - 200 employees</span>
+                                    </span>
+                                </div>
+                                <div class="col-sm-6">
+                                    <span class="text-muted d-block">Scheduled Date:</span>
+                                    <strong class="text-primary fs-6" th:text="${formattedDate}">Wednesday, November 4, 2026</strong>
+                                </div>
+                                <div class="col-sm-6">
+                                    <span class="text-muted d-block">Time Slot:</span>
+                                    <strong class="text-dark fs-6" th:text="${booking.preferredTimeSlot}">Morning (10:00 - 11:00 AM)</strong>
+                                </div>
+                                <div class="col-12" th:if="${booking.interestedModules}">
+                                    <span class="text-muted d-block mb-1">Tailored Modules:</span>
+                                    <span class="badge bg-secondary-subtle text-dark border me-1 mb-1" th:each="topic : ${#strings.arraySplit(booking.interestedModules, ',')}" th:text="${#strings.trim(topic)}">Attendance</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Next Steps Timeline -->
+                        <div class="mb-4">
+                            <h6 class="fw-bold text-dark mb-3"><i class="bi bi-list-check me-2 text-primary"></i>What Happens Next?</h6>
+                            <div class="d-flex gap-3 mb-3">
+                                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 28px; height: 28px; font-weight: bold; font-size: 0.85rem;">1</div>
+                                <div>
+                                    <strong class="text-dark small d-block">Calendar Invitation</strong>
+                                    <span class="text-muted small">Our team will generate a personalized Google Meet / Microsoft Teams meeting link sent to your inbox.</span>
+                                </div>
+                            </div>
+                            <div class="d-flex gap-3 mb-3">
+                                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 28px; height: 28px; font-weight: bold; font-size: 0.85rem;">2</div>
+                                <div>
+                                    <strong class="text-dark small d-block">Tailored Workspace Prep</strong>
+                                    <span class="text-muted small">We pre-configure sample shift rosters, geofenced perimeters, and muster logs matching your company scale.</span>
+                                </div>
+                            </div>
+                            <div class="d-flex gap-3">
+                                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 28px; height: 28px; font-weight: bold; font-size: 0.85rem;">3</div>
+                                <div>
+                                    <strong class="text-dark small d-block">Live 30-Minute Tour</strong>
+                                    <span class="text-muted small">Interactive Q&amp;A with zero sales pressure to determine if PeoplePulse HR fits your operational stack.</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="d-flex gap-2 flex-wrap justify-content-center pt-2">
+                            <a href="/" class="btn btn-outline-secondary px-4 py-2">
+                                <i class="bi bi-house me-1"></i> Return to Homepage
+                            </a>
+                            <a href="/login" class="btn btn-primary px-4 py-2" style="background: #1b4fc2; border-color: #1b4fc2;">
+                                <i class="bi bi-box-arrow-in-right me-1"></i> Employee Portal Sign In
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-top py-3 text-center text-muted small mt-auto">
+        <div class="container">
+            <span>&copy; 2026 PeoplePulse HR Inc. &bull; Pune Headquarters</span>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

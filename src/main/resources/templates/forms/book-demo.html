@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book a Demo &bull; PeoplePulse HR</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script th:src="@{/js/theme.js}"></script>
+    <style>
+        .demo-page-wrapper {
+            min-height: 100vh;
+            background: var(--bs-body-bg, #f8fafc);
+        }
+        .demo-hero-side {
+            background: linear-gradient(145deg, #0d1b3e 0%, #15387c 50%, #1b4fc2 100%);
+            color: #ffffff;
+            position: relative;
+            overflow: hidden;
+        }
+        .demo-hero-side::before {
+            content: '';
+            position: absolute;
+            top: -100px;
+            right: -100px;
+            width: 450px;
+            height: 450px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 106, 0, 0.22) 0%, rgba(255, 106, 0, 0) 70%);
+            pointer-events: none;
+        }
+        .demo-hero-side::after {
+            content: '';
+            position: absolute;
+            bottom: -80px;
+            left: -80px;
+            width: 320px;
+            height: 320px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(27, 79, 194, 0.35) 0%, rgba(27, 79, 194, 0) 70%);
+            pointer-events: none;
+        }
+        .demo-feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+        .demo-feature-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ff9142;
+            font-size: 1.15rem;
+            flex-shrink: 0;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        .demo-testimonial-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 14px;
+            padding: 20px;
+        }
+        .demo-form-card {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 12px 35px rgba(15, 23, 42, 0.08);
+            border: 1px solid #e2e8f0;
+        }
+        [data-bs-theme="dark"] .demo-form-card {
+            background: #1e293b;
+            border-color: #334155;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
+        }
+        .module-check-pill {
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .module-check-pill input:checked + label {
+            background-color: #1b4fc2;
+            color: #ffffff;
+            border-color: #1b4fc2;
+        }
+        [data-bs-theme="dark"] .module-check-pill input:checked + label {
+            background-color: #ff6a00;
+            border-color: #ff6a00;
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body class="demo-page-wrapper d-flex flex-column">
+
+    <!-- Top Navigation -->
+    <nav class="navbar navbar-expand-lg bg-white shadow-sm border-bottom py-2 py-md-3 sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold d-flex align-items-center" href="/">
+                <div class="people-plus-logo-icon me-2">
+                    <svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="34" height="34" rx="10" fill="url(#ppLogoGrad)"/>
+                        <rect x="0.5" y="0.5" width="33" height="33" rx="9.5" stroke="rgba(255,255,255,0.15)"/>
+                        <circle cx="13.5" cy="11.5" r="4.2" fill="#ffffff"/>
+                        <path d="M6 25.5C6 21.2 9.3 17.5 13.5 17.5C17.7 17.5 21 21.2 21 25.5H6Z" fill="#ffffff" fill-opacity="0.95"/>
+                        <circle cx="24.5" cy="11" r="6" fill="#ff5e3a"/>
+                        <path d="M24.5 7.8V14.2M21.3 11H27.7" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round"/>
+                        <defs>
+                            <linearGradient id="ppLogoGrad" x1="0" y1="0" x2="34" y2="34" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#1b4fc2"/>
+                                <stop offset="1" stop-color="#0a1a44"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+                <span class="people-plus-brand brand-light">
+                    <span class="brand-word-people">People</span><span class="brand-plus-sign">+</span>
+                    <span class="brand-word-hr">HR</span>
+                </span>
+            </a>
+            <div class="d-flex align-items-center gap-2 gap-md-3">
+                <button type="button" class="btn btn-outline-secondary btn-sm rounded-circle theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle theme" title="Toggle Light/Dark Theme">
+                    <i class="bi bi-moon-stars-fill theme-icon-dark"></i>
+                    <i class="bi bi-sun-fill theme-icon-light d-none"></i>
+                </button>
+                <a href="/" class="btn btn-outline-secondary btn-sm d-none d-sm-inline-flex align-items-center">
+                    <i class="bi bi-house me-1"></i> Home
+                </a>
+                <a href="/login" class="btn btn-outline-primary btn-sm px-3 fw-semibold">
+                    <i class="bi bi-box-arrow-in-right me-1"></i> Sign In
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <main class="container my-4 my-lg-5 flex-grow-1">
+        <div class="row g-4 align-items-stretch">
+            
+            <!-- LEFT PANE: Value Proposition, Feature Highlights & Trust Badges -->
+            <div class="col-lg-5 d-flex">
+                <div class="demo-hero-side p-4 p-md-5 rounded-4 shadow-sm w-100 d-flex flex-column justify-content-between">
+                    <div>
+                        <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill bg-white bg-opacity-15 text-white mb-3" style="font-size: 0.8rem; letter-spacing: 0.5px;">
+                            <span class="badge bg-warning text-dark rounded-pill px-2">EXCLUSIVE</span>
+                            <span class="fw-semibold">1-on-1 Tailored Walkthrough</span>
+                        </div>
+                        <h1 class="display-6 fw-bold mb-3 text-white" style="letter-spacing: -0.5px; line-height: 1.25;">
+                            See PeoplePulse HR in Action
+                        </h1>
+                        <p class="text-white-50 mb-4 fs-6" style="line-height: 1.6;">
+                            Discover how leading enterprises streamline employee clock-in, automate attendance muster logs, enforce geofencing, and eliminate leave administration overhead.
+                        </p>
+
+                        <!-- Feature Bullet Points -->
+                        <div class="demo-feature-item">
+                            <div class="demo-feature-icon">
+                                <i class="bi bi-geo-alt-fill"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold text-white mb-1">GPS Geofencing & Real-Time Clock-In</h6>
+                                <p class="text-white-50 small mb-0">Enforce perimeter radius checks (Pune HQ 200m) with tamper-resistant coordinate validation.</p>
+                            </div>
+                        </div>
+
+                        <div class="demo-feature-item">
+                            <div class="demo-feature-icon">
+                                <i class="bi bi-calendar3-week"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold text-white mb-1">7-Column Muster & Donut Analytics</h6>
+                                <p class="text-white-50 small mb-0">Monday-aligned calendar muster evaluating Present, Absent, Rest Days, and National Holidays.</p>
+                            </div>
+                        </div>
+
+                        <div class="demo-feature-item">
+                            <div class="demo-feature-icon">
+                                <i class="bi bi-person-check-fill"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold text-white mb-1">5-Category Leave Balances</h6>
+                                <p class="text-white-50 small mb-0">CL, SL, EL, Comp-Off, and LOP tracking with 1-click manager approvals and auto-audit sync.</p>
+                            </div>
+                        </div>
+
+                        <div class="demo-feature-item">
+                            <div class="demo-feature-icon">
+                                <i class="bi bi-shield-check"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold text-white mb-1">Enterprise Audit & Trace ID Logging</h6>
+                                <p class="text-white-50 small mb-0">Full MDC trace filtering, error interception, and automated midnight reconciliation crons.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Social Proof Card -->
+                    <div class="demo-testimonial-card mt-4">
+                        <div class="d-flex align-items-center gap-1 text-warning mb-2 fs-6">
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <span class="text-white fw-bold small ms-2">4.9 / 5 Rating</span>
+                        </div>
+                        <p class="small text-white-50 mb-2 fst-italic">
+                            &ldquo;PeoplePulse HR completely replaced our manual biometric register and reduced attendance discrepancies by 92% in the very first month.&rdquo;
+                        </p>
+                        <div class="small fw-semibold text-white">
+                            &bull; Head of People Operations, Enterprise Client
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT PANE: Interactive Booking Form -->
+            <div class="col-lg-7 d-flex">
+                <div class="demo-form-card p-4 p-md-5 w-100 d-flex flex-column justify-content-between">
+                    <div>
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <h3 class="fw-bold mb-0 text-dark">Schedule Your Demo</h3>
+                            <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2 rounded-pill fw-semibold">
+                                <i class="bi bi-stopwatch me-1"></i> 30-Min Session
+                            </span>
+                        </div>
+                        <p class="text-muted small mb-4">
+                            Fill in your business details below. A workplace specialist will tailor the demo directly to your team size and operational needs.
+                        </p>
+
+                        <!-- Error Alert if any -->
+                        <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show d-flex align-items-center" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill fs-5 me-2 flex-shrink-0"></i>
+                            <div>
+                                <strong th:text="${errorMessage}">Please fill all required fields.</strong>
+                            </div>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+
+                        <!-- Booking Form -->
+                        <form th:action="@{/book-demo}" th:object="${bookingDto}" method="post" id="demoBookingForm" novalidate>
+                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                            
+                            <!-- Name Row -->
+                            <div class="row g-3 mb-3">
+                                <div class="col-sm-6">
+                                    <label for="firstName" class="form-label small fw-semibold text-dark">First Name <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-person"></i></span>
+                                        <input type="text" class="form-control border-start-0" id="firstName" th:field="*{firstName}" placeholder="e.g. John" required>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label for="lastName" class="form-label small fw-semibold text-dark">Last Name <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-person"></i></span>
+                                        <input type="text" class="form-control border-start-0" id="lastName" th:field="*{lastName}" placeholder="e.g. Smith" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Email & Phone Row -->
+                            <div class="row g-3 mb-3">
+                                <div class="col-sm-6">
+                                    <label for="workEmail" class="form-label small fw-semibold text-dark">Business Email <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-envelope"></i></span>
+                                        <input type="email" class="form-control border-start-0" id="workEmail" th:field="*{workEmail}" placeholder="john.smith@company.com" required>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label for="phone" class="form-label small fw-semibold text-dark">Phone Number <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-telephone"></i></span>
+                                        <input type="tel" class="form-control border-start-0" id="phone" th:field="*{phone}" placeholder="+91 98765 43210" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Company & Job Title Row -->
+                            <div class="row g-3 mb-3">
+                                <div class="col-sm-6">
+                                    <label for="companyName" class="form-label small fw-semibold text-dark">Company Name <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-building"></i></span>
+                                        <input type="text" class="form-control border-start-0" id="companyName" th:field="*{companyName}" placeholder="e.g. Acme Technologies" required>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label for="jobTitle" class="form-label small fw-semibold text-dark">Job Title / Role</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-briefcase"></i></span>
+                                        <input type="text" class="form-control border-start-0" id="jobTitle" th:field="*{jobTitle}" placeholder="e.g. HR Manager / Director">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Country & Company Size Row -->
+                            <div class="row g-3 mb-3">
+                                <div class="col-sm-6">
+                                    <label for="country" class="form-label small fw-semibold text-dark">Country / Region <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-globe-americas"></i></span>
+                                        <select class="form-select border-start-0" id="country" th:field="*{country}" required>
+                                            <option value="" disabled>Select your country...</option>
+                                            <option th:each="countryItem : ${countries}" th:value="${countryItem.name}" th:text="${countryItem.name + ' (' + countryItem.dialCode + ')'}"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label for="companySize" class="form-label small fw-semibold text-dark">Number of Employees <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-people"></i></span>
+                                        <select class="form-select border-start-0" id="companySize" th:field="*{companySize}" required>
+                                            <option th:each="size : ${companySizes}" th:value="${size}" th:text="${size + ' employees'}"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Modules of Interest (Pills) -->
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold text-dark d-block">Areas of Interest (Select all that apply)</label>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <div class="module-check-pill" th:each="moduleItem : ${availableModules}">
+                                        <input type="checkbox" class="btn-check" th:id="${'mod_' + moduleItemStat.index}" th:value="${moduleItem}" th:field="*{modules}">
+                                        <label class="btn btn-outline-secondary btn-sm rounded-pill px-3 py-1" th:for="${'mod_' + moduleItemStat.index}">
+                                            <i class="bi bi-check-lg me-1"></i><span th:text="${moduleItem}">Module Name</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Preferred Date & Time Slot Row -->
+                            <div class="row g-3 mb-3">
+                                <div class="col-sm-6">
+                                    <label for="preferredDate" class="form-label small fw-semibold text-dark">Preferred Date <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-calendar-event"></i></span>
+                                        <input type="date" class="form-control border-start-0" id="preferredDate" th:field="*{preferredDate}" th:min="${minDate}" th:max="${maxDate}" required>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label for="preferredTimeSlot" class="form-label small fw-semibold text-dark">Preferred Time Slot <span class="text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-clock"></i></span>
+                                        <select class="form-select border-start-0" id="preferredTimeSlot" th:field="*{preferredTimeSlot}" required>
+                                            <option th:each="slot : ${timeSlots}" th:value="${slot}" th:text="${slot}"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Specific Notes -->
+                            <div class="mb-4">
+                                <label for="notes" class="form-label small fw-semibold text-dark">Specific Questions or Custom Requirements (Optional)</label>
+                                <textarea class="form-control" id="notes" th:field="*{notes}" rows="2" placeholder="e.g. We have 3 branch offices and need multi-site geofencing..."></textarea>
+                            </div>
+
+                            <!-- Submit Button -->
+                            <button type="submit" class="btn btn-peoplepulse-punch w-100 py-3 fs-6 fw-bold rounded-3 shadow-sm d-flex align-items-center justify-content-center gap-2">
+                                <i class="bi bi-calendar-check-fill"></i> Book My Personalized Demo
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Trust and Privacy Statement -->
+                    <div class="pt-4 mt-3 border-top text-center text-muted small">
+                        <div class="d-flex align-items-center justify-content-center gap-3 flex-wrap">
+                            <span><i class="bi bi-lock-fill text-success me-1"></i> 256-Bit SSL Secured</span>
+                            <span><i class="bi bi-check-circle-fill text-primary me-1"></i> No Credit Card Required</span>
+                            <span><i class="bi bi-shield-check text-info me-1"></i> GDPR & Privacy Compliant</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-top py-3 text-center text-muted small mt-auto">
+        <div class="container d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2">
+            <span>&copy; 2026 PeoplePulse HR. All rights reserved. &bull; Pune Headquarters</span>
+            <div>
+                <a href="/login" class="text-decoration-none text-muted me-3">Employee Sign In</a>
+                <a href="/reports/summary" class="text-decoration-none text-muted">Public Reports</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

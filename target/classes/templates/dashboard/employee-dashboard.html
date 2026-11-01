@@ -1,0 +1,1333 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Self Service &bull; People+ HR</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script th:src="@{/js/theme.js}"></script>
+</head>
+<body>
+
+    <div class="peoplepulse-wrapper">
+
+        <!-- People+ HR Left Vertical Sidebar (Desktop) -->
+        <aside class="peoplepulse-sidebar">
+            <div class="peoplepulse-sidebar-brand d-flex align-items-center justify-content-between">
+                <a href="/dashboard" class="d-flex align-items-center text-white text-decoration-none">
+                    <div class="people-plus-logo-icon me-2">
+                        <svg width="32" height="32" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="34" height="34" rx="10" fill="url(#ppLogoGrad)"/>
+                            <rect x="0.5" y="0.5" width="33" height="33" rx="9.5" stroke="rgba(255,255,255,0.15)"/>
+                            <circle cx="13.5" cy="11.5" r="4.2" fill="#ffffff"/>
+                            <path d="M6 25.5C6 21.2 9.3 17.5 13.5 17.5C17.7 17.5 21 21.2 21 25.5H6Z" fill="#ffffff" fill-opacity="0.95"/>
+                            <circle cx="24.5" cy="11" r="6" fill="#ff5e3a"/>
+                            <path d="M24.5 7.8V14.2M21.3 11H27.7" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round"/>
+                            <defs>
+                                <linearGradient id="ppLogoGrad" x1="0" y1="0" x2="34" y2="34" gradientUnits="userSpaceOnUse">
+                                    <stop stop-color="#1b4fc2"/>
+                                    <stop offset="1" stop-color="#0a1a44"/>
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+                    <span class="people-plus-brand">
+                        <span class="brand-word-people">People</span><span class="brand-plus-sign">+</span>
+                        <span class="brand-word-hr">HR</span>
+                    </span>
+                </a>
+                <button type="button" class="btn btn-link text-white-50 p-0 d-lg-none" onclick="toggleSidebar()" aria-label="Close sidebar">
+                    <i class="bi bi-x-lg fs-5"></i>
+                </button>
+            </div>
+
+            <ul class="peoplepulse-nav">
+                <li class="peoplepulse-nav-heading">Workspace</li>
+                <li class="peoplepulse-nav-item">
+                    <a href="/dashboard" class="peoplepulse-nav-link active">
+                        <i class="bi bi-grid-1x2"></i> Dashboard
+                    </a>
+                </li>
+                <li class="peoplepulse-nav-item">
+                    <a href="/notifications" class="peoplepulse-nav-link">
+                        <i class="bi bi-bell"></i> Notifications
+                    </a>
+                </li>
+                <li class="peoplepulse-nav-item">
+                    <a href="/attendance/history" class="peoplepulse-nav-link">
+                        <i class="bi bi-calendar3"></i> Attendance Log
+                    </a>
+                </li>
+
+                <li class="peoplepulse-nav-heading">Time & Leave</li>
+                <li class="peoplepulse-nav-item">
+                    <a href="/leaves/apply" class="peoplepulse-nav-link">
+                        <i class="bi bi-calendar-plus"></i> Leave Balances
+                    </a>
+                </li>
+                <li class="peoplepulse-nav-item">
+                    <a href="/holidays" class="peoplepulse-nav-link">
+                        <i class="bi bi-calendar-heart"></i> Holiday Calendar
+                    </a>
+                </li>
+            </ul>
+
+            <!-- Sidebar User Profile Footer -->
+            <div class="peoplepulse-sidebar-footer">
+                <div class="peoplepulse-user-badge">
+                    <div class="peoplepulse-avatar">
+                        <span th:text="${#strings.substring(currentUser.fullName, 0, 1)}">A</span>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <div class="text-white fw-semibold text-truncate small" th:text="${currentUser.fullName}">Alex Smith</div>
+                        <div class="text-white-50" style="font-size: 0.72rem;">EMPLOYEE</div>
+                    </div>
+                    <form th:action="@{/logout}" method="post" class="m-0">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                        <button type="submit" class="btn btn-link text-white-50 p-1 hover-white" title="Logout">
+                            <i class="bi bi-box-arrow-right fs-5"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="peoplepulse-main">
+
+            <!-- Top Header (Responsive) -->
+            <header class="peoplepulse-topbar">
+                <div class="d-flex align-items-center">
+                    <button type="button" class="btn btn-outline-secondary btn-sm d-lg-none me-2" onclick="toggleSidebar()" aria-label="Toggle navigation">
+                        <i class="bi bi-list fs-5"></i>
+                    </button>
+                    <div>
+                        <h5 class="fw-bold mb-0 text-dark" id="mobilePageTitle">Employee Self Service</h5>
+                        <span class="text-muted small d-none d-sm-inline" id="mobilePageSubtitle">Daily Work & Presence Center</span>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <a href="/notifications" class="btn btn-outline-secondary btn-sm rounded-circle position-relative" title="View Notifications">
+                        <i class="bi bi-bell-fill"></i>
+                    </a>
+                    <button type="button" class="btn btn-outline-secondary btn-sm rounded-circle theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle theme" title="Toggle Light/Dark Theme">
+                        <i class="bi bi-moon-stars-fill theme-icon-dark"></i>
+                        <i class="bi bi-sun-fill theme-icon-light d-none"></i>
+                    </button>
+                    <span class="badge bg-light text-dark border px-3 py-2 small d-none d-md-inline-block">
+                        <i class="bi bi-building me-1 text-primary"></i>
+                        <span th:text="${currentUser.department != null ? currentUser.department.name : 'General'}">IT</span>
+                    </span>
+                    <a href="/leaves/apply" class="btn btn-primary btn-sm rounded-pill px-3 fw-semibold">
+                        <i class="bi bi-plus-lg me-1"></i> Apply Leave
+                    </a>
+                </div>
+            </header>
+
+            <main class="p-3 p-md-4">
+
+                <!-- Dynamic Floating Feedback Toast Container for Mobile Actions -->
+                <div id="mobileToastContainer" class="position-fixed top-0 end-0 p-3" style="z-index: 1080;">
+                    <div id="mobileAppToast" class="toast align-items-center text-white bg-primary border-0 shadow-lg rounded-3" role="alert" aria-live="assertive" aria-atomic="true">
+                        <div class="d-flex">
+                            <div class="toast-body d-flex align-items-center gap-2" id="mobileToastMessage">
+                                <i class="bi bi-check-circle-fill fs-5"></i> Action completed!
+                            </div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Flash Alert Messages -->
+                <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show rounded-3 border-0 shadow-sm mb-4" role="alert">
+                    <i class="bi bi-check-circle-fill me-2 align-middle"></i>
+                    <span th:text="${successMessage}">Action succeeded!</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show rounded-3 border-0 shadow-sm mb-4" role="alert">
+                    <i class="bi bi-exclamation-circle-fill me-2 align-middle"></i>
+                    <span th:text="${errorMessage}">Error occurred!</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+
+                <!-- ===================================================================
+                     TAB 1: HOME (Employee Self Service Dashboard)
+                     =================================================================== -->
+                <section id="mobileTab-home" class="mobile-tab-pane active" aria-labelledby="tab-home">
+
+                    <!-- Mobile App Welcome Hero Banner (Visible on mobile viewports) -->
+                    <div class="mobile-banner-card mb-3 d-lg-none shadow-sm">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="peoplepulse-avatar" style="width: 48px; height: 48px; font-size: 1.25rem; background: rgba(255,255,255,0.22); border: 2px solid rgba(255,255,255,0.45); color: #ffffff;">
+                                    <span th:text="${#strings.substring(currentUser.fullName, 0, 1)}">A</span>
+                                </div>
+                                <div>
+                                    <div class="text-white-50" style="font-size: 0.76rem;">Good day 👋</div>
+                                    <h5 class="fw-bold text-white mb-0" th:text="${currentUser.fullName}">Alex Smith</h5>
+                                    <div class="text-white-50 small mt-1">
+                                        <span class="badge bg-white text-primary px-2 py-1 me-1" style="font-size: 0.68rem;" th:text="${currentUser.department != null ? currentUser.department.name : 'Engineering'}">IT</span>
+                                        <span style="font-size: 0.72rem;" th:text="${currentUser.shift != null ? currentUser.shift.name : 'General Shift'}">General Shift</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <span class="badge bg-success text-white px-2 py-1 small rounded-pill">
+                                    <i class="bi bi-shield-check me-1"></i>Active
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Top Row: Sign In Widget + Quick Action Summary -->
+                    <div class="row g-3 g-md-4 mb-4">
+                        
+                        <!-- Left: Iconic Sign-In / Sign-Out Widget -->
+                        <div class="col-lg-5 col-xl-4">
+                            <div class="peoplepulse-sign-in-widget h-100">
+                                <span class="text-uppercase fw-bold text-muted small" style="letter-spacing: 0.5px; font-size: 0.72rem;">
+                                    Attendance &bull; Web Sign-In
+                                </span>
+                                
+                                <!-- Digital Live Clock -->
+                                <div class="mt-2 mt-md-3">
+                                    <div class="peoplepulse-clock-circle" id="liveClock">
+                                        --:--:--
+                                    </div>
+                                    <div class="text-muted small mb-3">
+                                        <i class="bi bi-calendar-event me-1"></i>
+                                        <span th:text="${#temporals.format(#temporals.createNow(), 'EEEE, dd MMMM yyyy')}">Monday, 26 October 2026</span>
+                                    </div>
+                                </div>
+
+                                <!-- Today's Status Pill -->
+                                <div class="mb-3 mb-md-4">
+                                    <div th:if="${todayAttendance == null}">
+                                        <span class="badge bg-secondary-subtle text-secondary fs-6 px-3 py-2 rounded-pill border">
+                                            <i class="bi bi-circle me-1"></i> Not Signed In Today
+                                        </span>
+                                    </div>
+                                    <div th:if="${todayAttendance != null}">
+                                        <span th:if="${todayAttendance.status.name() == 'PRESENT'}" class="badge badge-peoplepulse badge-present fs-6 px-3 py-2">
+                                            <i class="bi bi-check-circle-fill me-1"></i> Signed In &bull; Present
+                                        </span>
+                                        <span th:if="${todayAttendance.status.name() == 'LATE'}" class="badge badge-peoplepulse badge-late fs-6 px-3 py-2">
+                                            <i class="bi bi-exclamation-triangle-fill me-1"></i> Signed In &bull; Late
+                                        </span>
+                                        <span th:if="${todayAttendance.status.name() == 'HALF_DAY'}" class="badge badge-peoplepulse badge-halfday fs-6 px-3 py-2">
+                                            <i class="bi bi-clock-history me-1"></i> Half Day Logged
+                                        </span>
+                                        <span th:if="${todayAttendance.status.name() == 'ON_LEAVE'}" class="badge badge-peoplepulse badge-leave fs-6 px-3 py-2">
+                                            <i class="bi bi-calendar-check me-1"></i> On Approved Leave
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <!-- 1. Punch In Form -->
+                                <div th:if="${todayAttendance == null}">
+                                    <form id="punchInForm" th:action="@{/attendance/punch-in}" method="post">
+                                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                        <input type="hidden" id="latitudeInput" name="latitude"/>
+                                        <input type="hidden" id="longitudeInput" name="longitude"/>
+
+                                        <div class="mb-3 text-start">
+                                            <input type="text" id="punchNotes" name="notes" class="form-control form-control-sm" placeholder="Add work location note (e.g. Office Desk)">
+                                        </div>
+
+                                        <button type="button" id="punchInBtn" class="btn btn-peoplepulse-punch">
+                                            <i class="bi bi-fingerprint me-2 fs-5 align-middle"></i> Sign In
+                                        </button>
+                                        <div id="geoStatus" class="small text-muted mt-2"></div>
+                                    </form>
+                                </div>
+
+                                <!-- 2. Punch Out Form -->
+                                <div th:if="${todayAttendance != null and todayAttendance.punchOutTime == null and todayAttendance.status.name() != 'ON_LEAVE'}">
+                                    <form th:action="@{/attendance/punch-out}" method="post">
+                                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                        <button type="submit" class="btn btn-peoplepulse-punch-out">
+                                            <i class="bi bi-box-arrow-right me-2"></i> Sign Out
+                                        </button>
+                                    </form>
+                                </div>
+
+                                <!-- 3. Completed Today's Shift -->
+                                <div th:if="${todayAttendance != null and (todayAttendance.punchOutTime != null or todayAttendance.status.name() == 'ON_LEAVE')}">
+                                    <button class="btn btn-secondary w-100 py-3 fw-semibold rounded-3" disabled>
+                                        <i class="bi bi-check-all me-1"></i> Day Completed
+                                    </button>
+                                </div>
+
+                                <!-- Sign In Details Summary -->
+                                <div th:if="${todayAttendance != null}" class="mt-3 mt-md-4 p-3 bg-light rounded-3 text-start small border">
+                                    <div class="row g-2">
+                                        <div class="col-6">
+                                            <span class="text-muted d-block" style="font-size: 0.75rem;">First In:</span>
+                                            <strong th:text="${todayAttendance.punchInTime != null ? #temporals.format(todayAttendance.punchInTime, 'hh:mm a') : '--'}">09:05 AM</strong>
+                                        </div>
+                                        <div class="col-6">
+                                            <span class="text-muted d-block" style="font-size: 0.75rem;">Last Out:</span>
+                                            <strong th:text="${todayAttendance.punchOutTime != null ? #temporals.format(todayAttendance.punchOutTime, 'hh:mm a') : 'In Progress'}">--</strong>
+                                        </div>
+                                        <div class="col-6" th:if="${todayAttendance.totalHours > 0}">
+                                            <span class="text-muted d-block" style="font-size: 0.75rem;">Total Hours:</span>
+                                            <strong class="text-primary"><span th:text="${todayAttendance.totalHours}">8.95</span> hrs</strong>
+                                        </div>
+                                        <div class="col-6" th:if="${todayAttendance.inLatitude != null}">
+                                            <span class="text-muted d-block" style="font-size: 0.75rem;">Location:</span>
+                                            <strong class="text-success"><i class="bi bi-geo-alt-fill me-1"></i>GPS Verified</strong>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <!-- Right: Quick Access & Shift Schedule Overview -->
+                        <div class="col-lg-7 col-xl-8">
+                            
+                            <!-- Leave Quotas Quick Bar -->
+                            <div class="row g-2 mb-3">
+                                <div class="col-6 col-md-3" th:each="bal : ${leaveBalances}" th:if="${bal.leaveType.name() == 'CASUAL'}">
+                                    <a href="/leaves/apply" class="p-2 px-3 bg-white rounded-3 border d-flex align-items-center justify-content-between text-decoration-none shadow-sm h-100">
+                                        <div>
+                                            <span class="text-muted d-block" style="font-size: 0.72rem;">CASUAL (CL)</span>
+                                            <h5 class="fw-bold text-primary mb-0"><span th:text="${#numbers.formatDecimal(bal.available, 1, 0)}">11</span> <span class="small text-muted fw-normal" style="font-size: 0.7rem;">days</span></h5>
+                                        </div>
+                                        <i class="bi bi-umbrella text-primary fs-4 opacity-75"></i>
+                                    </a>
+                                </div>
+                                <div class="col-6 col-md-3" th:each="bal : ${leaveBalances}" th:if="${bal.leaveType.name() == 'SICK'}">
+                                    <a href="/leaves/apply" class="p-2 px-3 bg-white rounded-3 border d-flex align-items-center justify-content-between text-decoration-none shadow-sm h-100">
+                                        <div>
+                                            <span class="text-muted d-block" style="font-size: 0.72rem;">SICK (SL)</span>
+                                            <h5 class="fw-bold text-success mb-0"><span th:text="${#numbers.formatDecimal(bal.available, 1, 0)}">10</span> <span class="small text-muted fw-normal" style="font-size: 0.7rem;">days</span></h5>
+                                        </div>
+                                        <i class="bi bi-heart-pulse text-success fs-4 opacity-75"></i>
+                                    </a>
+                                </div>
+                                <div class="col-6 col-md-3" th:each="bal : ${leaveBalances}" th:if="${bal.leaveType.name() == 'EARNED'}">
+                                    <a href="/leaves/apply" class="p-2 px-3 bg-white rounded-3 border d-flex align-items-center justify-content-between text-decoration-none shadow-sm h-100">
+                                        <div>
+                                            <span class="text-muted d-block" style="font-size: 0.72rem;">EARNED (EL)</span>
+                                            <h5 class="fw-bold mb-0" style="color: #8b5cf6;"><span th:text="${#numbers.formatDecimal(bal.available, 1, 0)}">13</span> <span class="small text-muted fw-normal" style="font-size: 0.7rem;">days</span></h5>
+                                        </div>
+                                        <i class="bi bi-briefcase fs-4 opacity-75" style="color: #8b5cf6;"></i>
+                                    </a>
+                                </div>
+                                <div class="col-6 col-md-3" th:each="bal : ${leaveBalances}" th:if="${bal.leaveType.name() == 'COMP_OFF'}">
+                                    <a href="/leaves/apply" class="p-2 px-3 bg-white rounded-3 border d-flex align-items-center justify-content-between text-decoration-none shadow-sm h-100">
+                                        <div>
+                                            <span class="text-muted d-block" style="font-size: 0.72rem;">COMP-OFF</span>
+                                            <h5 class="fw-bold text-warning mb-0"><span th:text="${#numbers.formatDecimal(bal.available, 1, 0)}">3</span> <span class="small text-muted fw-normal" style="font-size: 0.7rem;">days</span></h5>
+                                        </div>
+                                        <i class="bi bi-clock-history text-warning fs-4 opacity-75"></i>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <!-- Next Holiday Strip -->
+                            <div th:if="${nextHoliday != null}" class="alert alert-light border py-2 px-3 mb-3 d-flex align-items-center justify-content-between flex-wrap gap-2">
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="badge bg-primary px-2 py-1"><i class="bi bi-calendar-heart me-1"></i> Upcoming Holiday</span>
+                                    <strong class="text-dark" th:text="${nextHoliday.name}">Diwali</strong> &bull;
+                                    <span class="text-muted small" th:text="${nextHoliday.formattedDate + ' (' + nextHoliday.dayOfWeek + ')'}">08 Nov 2026 (Sunday)</span>
+                                </div>
+                                <a href="/holidays" class="btn btn-outline-primary btn-sm rounded-pill py-0 px-2" style="font-size: 0.75rem;">
+                                    View Calendar &rarr;
+                                </a>
+                            </div>
+
+                            <div class="row g-2 g-md-3 mb-3 mb-md-4">
+                                <div class="col-12 col-sm-4">
+                                    <a href="/leaves/apply" class="peoplepulse-quick-pill">
+                                        <i class="bi bi-calendar-plus text-primary"></i>
+                                        <div>
+                                            <strong class="d-block">Apply Leave</strong>
+                                            <span class="text-muted small">Casual, Sick, Annual</span>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="col-12 col-sm-4">
+                                    <a href="/attendance/history" class="peoplepulse-quick-pill">
+                                        <i class="bi bi-calendar-range text-success"></i>
+                                        <div>
+                                            <strong class="d-block">Attendance Info</strong>
+                                            <span class="text-muted small">Monthly muster log</span>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="col-12 col-sm-4">
+                                    <a href="/attendance/history" class="peoplepulse-quick-pill">
+                                        <i class="bi bi-clock-history text-warning"></i>
+                                        <div>
+                                            <strong class="d-block">Shift Details</strong>
+                                            <span class="text-muted small" th:text="${currentUser.shift != null ? currentUser.shift.name : 'General Shift'}">General Shift</span>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+
+                            <!-- Shift Policy & Working Guidelines Card -->
+                            <div class="peoplepulse-card">
+                                <div class="peoplepulse-card-header">
+                                    <h6><i class="bi bi-info-circle me-2 text-primary"></i>Shift Rules & Punctuality Policy</h6>
+                                    <span class="badge bg-light text-primary border">
+                                        Shift: <span th:text="${currentUser.shift != null ? (currentUser.shift.startTime + ' - ' + currentUser.shift.endTime) : '09:00 - 18:00'}">09:00 - 18:00</span>
+                                    </span>
+                                </div>
+                                <div class="peoplepulse-card-body">
+                                    <div class="row g-2 g-md-3 small">
+                                        <div class="col-12 col-md-6">
+                                            <div class="p-3 bg-light rounded-3 border">
+                                                <strong class="d-block text-dark mb-1">Standard Timing</strong>
+                                                <p class="text-muted mb-0">Expected work duration is 8 hours daily (09:00 AM to 06:00 PM).</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-md-6">
+                                            <div class="p-3 bg-light rounded-3 border">
+                                                <strong class="d-block text-dark mb-1">Grace Period</strong>
+                                                <p class="text-muted mb-0">Up to 15 minutes permissible delay before check-in is flagged as <code>LATE</code>.</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-md-6">
+                                            <div class="p-3 bg-light rounded-3 border">
+                                                <strong class="d-block text-dark mb-1">Half Day Mark</strong>
+                                                <p class="text-muted mb-0">Any shift duration under 4.0 hours is marked as a <code>HALF_DAY</code>.</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-md-6">
+                                            <div class="p-3 bg-light rounded-3 border">
+                                                <strong class="d-block text-dark mb-1">Automated Audit</strong>
+                                                <p class="text-muted mb-0">Employees with no punch-in and no approved leave by 23:59 are marked <code>ABSENT</code>.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Attendance History Table -->
+                    <div class="peoplepulse-card">
+                        <div class="peoplepulse-card-header">
+                            <h6><i class="bi bi-table me-2 text-primary"></i>Recent Attendance Records</h6>
+                            <a href="/attendance/history" class="btn btn-outline-primary btn-sm rounded-pill px-3">View Full Muster</a>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table peoplepulse-table table-mobile-card align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>First In</th>
+                                        <th>Last Out</th>
+                                        <th>Total Hours</th>
+                                        <th>Status</th>
+                                        <th>Remarks</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="rec : ${recentRecords}">
+                                        <td data-label="Date" class="fw-semibold text-dark" th:text="${rec.workDate}">2026-10-25</td>
+                                        <td data-label="First In" th:text="${rec.punchInTime != null ? #temporals.format(rec.punchInTime, 'hh:mm a') : '--'}">09:05 AM</td>
+                                        <td data-label="Last Out" th:text="${rec.punchOutTime != null ? #temporals.format(rec.punchOutTime, 'hh:mm a') : '--'}">06:02 PM</td>
+                                        <td data-label="Total Hours"><strong><span th:text="${rec.totalHours}">8.95</span> hrs</strong></td>
+                                        <td data-label="Status">
+                                            <span th:if="${rec.status.name() == 'PRESENT'}" class="badge badge-peoplepulse badge-present">Present</span>
+                                            <span th:if="${rec.status.name() == 'LATE'}" class="badge badge-peoplepulse badge-late">Late In</span>
+                                            <span th:if="${rec.status.name() == 'HALF_DAY'}" class="badge badge-peoplepulse badge-halfday">Half Day</span>
+                                            <span th:if="${rec.status.name() == 'ABSENT'}" class="badge badge-peoplepulse badge-absent">Absent</span>
+                                            <span th:if="${rec.status.name() == 'ON_LEAVE'}" class="badge badge-peoplepulse badge-leave">On Leave</span>
+                                        </td>
+                                        <td data-label="Remarks" class="text-muted small" th:text="${rec.notes != null ? rec.notes : '-'}">Punched in on time</td>
+                                    </tr>
+                                    <tr th:if="${#lists.isEmpty(recentRecords)}">
+                                        <td colspan="6" class="text-center text-muted py-4">No attendance records logged yet.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </section>
+
+
+                <!-- ===================================================================
+                     TAB 2: ACTION (Instant Actions & Self-Service Requests)
+                     =================================================================== -->
+                <section id="mobileTab-action" class="mobile-tab-pane" aria-labelledby="tab-action">
+                    
+                    <!-- Action Center Hero Card -->
+                    <div class="card border-0 shadow-sm mb-4 rounded-3" style="background: linear-gradient(135deg, #f0fdf4 0%, #e0f2fe 100%); border-left: 5px solid #10b981 !important;">
+                        <div class="card-body p-3 p-md-4">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <span class="badge bg-success px-3 py-1 rounded-pill small">
+                                    <i class="bi bi-lightning-charge-fill me-1"></i> Quick Action Center
+                                </span>
+                                <span class="badge bg-white text-secondary border small">People+ HR ESS</span>
+                            </div>
+                            <h5 class="fw-bold text-dark mb-1">Instant Self-Service & Attendance Desk</h5>
+                            <p class="text-muted small mb-0">Record daily attendance, submit leave requests, regularize missed punches, or file work-from-home declarations.</p>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 g-md-4">
+                        
+                        <!-- Quick Clock In / Out Card -->
+                        <div class="col-12 col-md-6">
+                            <div class="peoplepulse-card h-100">
+                                <div class="peoplepulse-card-header">
+                                    <h6><i class="bi bi-clock me-2 text-primary"></i>Quick Punch Desk</h6>
+                                    <span class="badge bg-primary-subtle text-primary border">Live Web Sign-In</span>
+                                </div>
+                                <div class="peoplepulse-card-body text-center p-3">
+                                    <div class="mb-3">
+                                        <span class="badge bg-light text-dark border px-3 py-2 fs-6">
+                                            <i class="bi bi-calendar-check me-1 text-primary"></i>
+                                            <span th:text="${#temporals.format(#temporals.createNow(), 'EEEE, dd MMM yyyy')}">Today</span>
+                                        </span>
+                                    </div>
+
+                                    <!-- Punch In / Punch Out State -->
+                                    <div th:if="${todayAttendance == null}">
+                                        <div class="alert alert-info py-2 small mb-3">
+                                            <i class="bi bi-geo-alt-fill text-danger me-1"></i> Check-in location will be auto-verified via browser GPS.
+                                        </div>
+                                        <form th:action="@{/attendance/punch-in}" method="post">
+                                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                            <div class="mb-3">
+                                                <input type="text" name="notes" class="form-control" placeholder="Work location / task note (e.g. Office Desk)">
+                                            </div>
+                                            <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold rounded-pill shadow-sm">
+                                                <i class="bi bi-fingerprint me-2 fs-5 align-middle"></i> Punch In Now
+                                            </button>
+                                        </form>
+                                    </div>
+
+                                    <div th:if="${todayAttendance != null and todayAttendance.punchOutTime == null and todayAttendance.status.name() != 'ON_LEAVE'}">
+                                        <div class="alert alert-success py-2 small mb-3">
+                                            <i class="bi bi-check-circle-fill me-1"></i> Punched in at <strong th:text="${#temporals.format(todayAttendance.punchInTime, 'hh:mm a')}">09:05 AM</strong>
+                                        </div>
+                                        <form th:action="@{/attendance/punch-out}" method="post">
+                                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                            <button type="submit" class="btn btn-danger w-100 py-2 fw-semibold rounded-pill shadow-sm">
+                                                <i class="bi bi-box-arrow-right me-2"></i> Punch Out (End Shift)
+                                            </button>
+                                        </form>
+                                    </div>
+
+                                    <div th:if="${todayAttendance != null and (todayAttendance.punchOutTime != null or todayAttendance.status.name() == 'ON_LEAVE')}">
+                                        <div class="alert alert-secondary py-3 mb-0 rounded-3">
+                                            <i class="bi bi-check-all text-success fs-4 d-block mb-1"></i>
+                                            <strong>Today's Work Logged</strong>
+                                            <div class="small text-muted mt-1">Shift completed. See full attendance history in muster.</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Apply Leave Fast Track Card -->
+                        <div class="col-12 col-md-6">
+                            <div class="peoplepulse-card h-100">
+                                <div class="peoplepulse-card-header">
+                                    <h6><i class="bi bi-calendar-plus me-2 text-success"></i>Apply Leave Shortcut</h6>
+                                    <a href="/leaves/apply" class="btn btn-sm btn-outline-primary rounded-pill">View All Quotas</a>
+                                </div>
+                                <div class="peoplepulse-card-body p-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-3 p-2 bg-light rounded-3 border">
+                                        <div>
+                                            <span class="text-muted small d-block">Available Leaves:</span>
+                                            <strong class="text-dark">Casual, Sick & Earned</strong>
+                                        </div>
+                                        <span class="badge bg-success-subtle text-success fs-6 border border-success-subtle px-3 py-1">24+ Days Available</span>
+                                    </div>
+
+                                    <form th:action="@{/leaves/apply}" method="post">
+                                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                        <div class="row g-2 mb-2">
+                                            <div class="col-6">
+                                                <label class="form-label small fw-semibold text-muted mb-1">Leave Type</label>
+                                                <select name="leaveType" class="form-select form-select-sm">
+                                                    <option value="CASUAL">Casual Leave (CL)</option>
+                                                    <option value="SICK">Sick Leave (SL)</option>
+                                                    <option value="EARNED">Earned Leave (EL)</option>
+                                                    <option value="COMP_OFF">Comp-Off</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-label small fw-semibold text-muted mb-1">Start Date</label>
+                                                <input type="date" name="startDate" class="form-control form-control-sm" required>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <input type="text" name="reason" class="form-control form-control-sm" placeholder="Reason for leave application..." required>
+                                        </div>
+                                        <div class="d-flex gap-2">
+                                            <button type="submit" class="btn btn-success btn-sm flex-1 w-100 rounded-pill fw-semibold py-2">
+                                                <i class="bi bi-send me-1"></i> Submit Leave Request
+                                            </button>
+                                            <a href="/leaves/apply" class="btn btn-outline-secondary btn-sm rounded-pill px-3 py-2">
+                                                Details
+                                            </a>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Attendance Regularization & Missed Punch Card -->
+                        <div class="col-12 col-md-6">
+                            <div class="peoplepulse-card h-100">
+                                <div class="peoplepulse-card-header">
+                                    <h6><i class="bi bi-arrow-repeat me-2 text-warning"></i>Attendance Regularization</h6>
+                                    <span class="badge bg-warning-subtle text-dark border">Missed Punch</span>
+                                </div>
+                                <div class="peoplepulse-card-body p-3">
+                                    <p class="text-muted small mb-3">Forgot to punch in or out? Submit a regularization request to your reporting manager.</p>
+                                    <form onsubmit="submitRegularization(event)">
+                                        <div class="row g-2 mb-2">
+                                            <div class="col-6">
+                                                <label class="form-label small fw-semibold text-muted mb-1">Missed Date</label>
+                                                <input type="date" id="regularizeDate" class="form-control form-control-sm" required>
+                                            </div>
+                                            <div class="col-6">
+                                                <label class="form-label small fw-semibold text-muted mb-1">Request Type</label>
+                                                <select id="regularizeType" class="form-select form-select-sm">
+                                                    <option value="MISSED_IN">Missed Check-In</option>
+                                                    <option value="MISSED_OUT">Missed Check-Out</option>
+                                                    <option value="BIOMETRIC_FAIL">Biometric Device Issue</option>
+                                                    <option value="ON_DUTY">On Duty / Client Visit</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <input type="text" id="regularizeReason" class="form-control form-control-sm" placeholder="Reason for regularization..." required>
+                                        </div>
+                                        <button type="submit" class="btn btn-warning text-dark btn-sm w-100 rounded-pill fw-semibold py-2">
+                                            <i class="bi bi-check-circle me-1"></i> Submit Regularization Request
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Work From Home / Remote Duty Card -->
+                        <div class="col-12 col-md-6">
+                            <div class="peoplepulse-card h-100">
+                                <div class="peoplepulse-card-header">
+                                    <h6><i class="bi bi-house-door me-2 text-info"></i>Remote Duty & WFH</h6>
+                                    <span class="badge bg-info-subtle text-info border">Flexible Work</span>
+                                </div>
+                                <div class="peoplepulse-card-body p-3">
+                                    <p class="text-muted small mb-3">Notify HR and team members when operating from a remote workstation or client location.</p>
+                                    
+                                    <div class="p-3 bg-light rounded-3 border mb-3 d-flex align-items-center justify-content-between">
+                                        <div>
+                                            <strong class="d-block text-dark small">Today's Work Mode</strong>
+                                            <span class="text-muted small" id="workModeLabel">Office Desk (In-Person)</span>
+                                        </div>
+                                        <button type="button" class="btn btn-outline-primary btn-sm rounded-pill" onclick="toggleWorkMode()">
+                                            Switch to WFH
+                                        </button>
+                                    </div>
+
+                                    <div class="d-flex align-items-center justify-content-between text-muted small">
+                                        <span><i class="bi bi-shield-check text-success me-1"></i>Policy: 2 days WFH/month</span>
+                                        <span class="text-success fw-semibold">Quota Active</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pending Workflow Requests Tracker -->
+                        <div class="col-12">
+                            <div class="peoplepulse-card">
+                                <div class="peoplepulse-card-header">
+                                    <h6><i class="bi bi-hourglass-split me-2 text-primary"></i>My Recent Requests & Approvals</h6>
+                                    <span class="badge bg-light text-dark border">Live Status</span>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table peoplepulse-table table-mobile-card align-middle">
+                                        <thead>
+                                            <tr>
+                                                <th>Request</th>
+                                                <th>Type</th>
+                                                <th>Submitted On</th>
+                                                <th>Approver</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td data-label="Request" class="fw-semibold text-dark">Casual Leave (2 Days)</td>
+                                                <td data-label="Type"><span class="badge bg-primary-subtle text-primary">Leave Application</span></td>
+                                                <td data-label="Submitted On">Today, 08:30 AM</td>
+                                                <td data-label="Approver">Reporting Manager</td>
+                                                <td data-label="Status"><span class="badge bg-warning text-dark"><i class="bi bi-clock me-1"></i>Pending Review</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td data-label="Request" class="fw-semibold text-dark">Shift Regularization (Oct 24)</td>
+                                                <td data-label="Type"><span class="badge bg-secondary-subtle text-secondary">Attendance</span></td>
+                                                <td data-label="Submitted On">25 Oct 2026</td>
+                                                <td data-label="Approver">HR Operations</td>
+                                                <td data-label="Status"><span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Approved</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td data-label="Request" class="fw-semibold text-dark">Comp-Off Credit (Weekend Deployment)</td>
+                                                <td data-label="Type"><span class="badge bg-info-subtle text-info">Credit Grant</span></td>
+                                                <td data-label="Submitted On">18 Oct 2026</td>
+                                                <td data-label="Approver">Project Lead</td>
+                                                <td data-label="Status"><span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Approved</span></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- ===================================================================
+                     TAB 3: EXPLORE (Comprehensive Module Directory)
+                     =================================================================== -->
+                <section id="mobileTab-explore" class="mobile-tab-pane" aria-labelledby="tab-explore">
+
+                    <!-- Explore Directory Hero Card -->
+                    <div class="card border-0 shadow-sm mb-4 rounded-3" style="background: linear-gradient(135deg, #eff6ff 0%, #ede9fe 100%); border-left: 5px solid #3b82f6 !important;">
+                        <div class="card-body p-3 p-md-4">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <span class="badge bg-primary px-3 py-1 rounded-pill small">
+                                    <i class="bi bi-compass-fill me-1"></i> Feature Catalog
+                                </span>
+                                <span class="badge bg-white text-secondary border small">People+ HR Hub</span>
+                            </div>
+                            <h5 class="fw-bold text-dark mb-1">Explore Directory & Modules</h5>
+                            <p class="text-muted small mb-3">Browse all enterprise tools, attendance muster reports, holiday calendars, timesheet slips, and HR policies.</p>
+                            
+                            <!-- Search filter bar -->
+                            <div class="position-relative">
+                                <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+                                <input type="text" id="exploreSearchInput" class="form-control rounded-pill ps-5 py-2 shadow-sm" placeholder="Search features, policies, muster, holidays..." oninput="filterExploreCards()" onkeyup="filterExploreCards()">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Category: Time & Attendance -->
+                    <div class="mb-4 explore-category-section">
+                        <h6 class="fw-bold text-muted text-uppercase mb-3" style="letter-spacing: 0.5px; font-size: 0.75rem;">
+                            <i class="bi bi-calendar3 me-1 text-primary"></i> Time & Attendance Modules
+                        </h6>
+                        <div class="row g-3">
+                            <div class="col-12 col-md-6 col-lg-4 explore-item" data-keywords="attendance muster history clock in punch timesheet working hours">
+                                <a href="/attendance/history" class="explore-feature-card">
+                                    <div class="explore-feature-icon" style="background: rgba(27, 79, 194, 0.1); color: var(--peoplepulse-primary);">
+                                        <i class="bi bi-calendar-check-fill"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <strong class="d-block text-dark">Attendance Muster Log</strong>
+                                        <span class="text-muted small">View full monthly muster, daily punch timings and overtime calculations.</span>
+                                    </div>
+                                    <i class="bi bi-chevron-right text-muted opacity-50"></i>
+                                </a>
+                            </div>
+
+                            <div class="col-12 col-md-6 col-lg-4 explore-item" data-keywords="holidays calendar gazetted festival diwali off dates">
+                                <a href="/holidays" class="explore-feature-card">
+                                    <div class="explore-feature-icon" style="background: rgba(239, 68, 68, 0.1); color: #ef4444;">
+                                        <i class="bi bi-calendar-heart-fill"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <strong class="d-block text-dark">Holiday Calendar 2026</strong>
+                                        <span class="text-muted small">Official schedule of gazetted, festival and company observed holidays.</span>
+                                    </div>
+                                    <i class="bi bi-chevron-right text-muted opacity-50"></i>
+                                </a>
+                            </div>
+
+                            <div class="col-12 col-md-6 col-lg-4 explore-item" data-keywords="shift roster timing punctuality grace period 09:00 18:00">
+                                <a href="/attendance/history" class="explore-feature-card">
+                                    <div class="explore-feature-icon" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;">
+                                        <i class="bi bi-clock-history"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <strong class="d-block text-dark">Shift Roster & Rules</strong>
+                                        <span class="text-muted small">Shift timings (09:00 - 18:00), 15-min grace window, and audit guidelines.</span>
+                                    </div>
+                                    <i class="bi bi-chevron-right text-muted opacity-50"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Category: Leave Management -->
+                    <div class="mb-4 explore-category-section">
+                        <h6 class="fw-bold text-muted text-uppercase mb-3" style="letter-spacing: 0.5px; font-size: 0.75rem;">
+                            <i class="bi bi-calendar-plus me-1 text-success"></i> Leave Management & Time Off
+                        </h6>
+                        <div class="row g-3">
+                            <div class="col-12 col-md-6 col-lg-4 explore-item" data-keywords="leave apply quota balances casual sick earned comp-off history">
+                                <a href="/leaves/apply" class="explore-feature-card">
+                                    <div class="explore-feature-icon" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">
+                                        <i class="bi bi-calendar2-range-fill"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <strong class="d-block text-dark">Leave Balances & Apply</strong>
+                                        <span class="text-muted small">Check quota balances for CL, SL, EL and submit time-off requests.</span>
+                                    </div>
+                                    <i class="bi bi-chevron-right text-muted opacity-50"></i>
+                                </a>
+                            </div>
+
+                            <div class="col-12 col-md-6 col-lg-4 explore-item" data-keywords="leave policy rules rollover maternity handbook guidelines">
+                                <a href="/leaves/apply" class="explore-feature-card">
+                                    <div class="explore-feature-icon" style="background: rgba(139, 92, 246, 0.1); color: #8b5cf6;">
+                                        <i class="bi bi-file-earmark-ruled-fill"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <strong class="d-block text-dark">Leave Policy Handbook</strong>
+                                        <span class="text-muted small">Entitlement guidelines, carry-forward rules, and advance notice policies.</span>
+                                    </div>
+                                    <i class="bi bi-chevron-right text-muted opacity-50"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Category: Reports & Performance -->
+                    <div class="mb-4 explore-category-section">
+                        <h6 class="fw-bold text-muted text-uppercase mb-3" style="letter-spacing: 0.5px; font-size: 0.75rem;">
+                            <i class="bi bi-file-earmark-bar-graph me-1 text-info"></i> Reports & Timesheets
+                        </h6>
+                        <div class="row g-3">
+                            <div class="col-12 col-md-6 col-lg-4 explore-item" data-keywords="reports timesheet summary slip hours monthly breakdown export">
+                                <a href="/reports/summary" class="explore-feature-card">
+                                    <div class="explore-feature-icon" style="background: rgba(14, 165, 233, 0.1); color: #0ea5e9;">
+                                        <i class="bi bi-file-earmark-text-fill"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <strong class="d-block text-dark">Timesheet & Hours Summary</strong>
+                                        <span class="text-muted small">Detailed monthly attendance analysis, worked hours and punctuality percentages.</span>
+                                    </div>
+                                    <i class="bi bi-chevron-right text-muted opacity-50"></i>
+                                </a>
+                            </div>
+
+                            <div class="col-12 col-md-6 col-lg-4 explore-item" data-keywords="salary pay slips compensation tax deductions payroll">
+                                <a href="/reports/summary" class="explore-feature-card">
+                                    <div class="explore-feature-icon" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">
+                                        <i class="bi bi-cash-stack"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <strong class="d-block text-dark">Salary Slips & Payouts</strong>
+                                        <span class="text-muted small">Download verified monthly pay slips and tax deduction certificates.</span>
+                                    </div>
+                                    <i class="bi bi-chevron-right text-muted opacity-50"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Category: Platform & Enterprise -->
+                    <div class="mb-4 explore-category-section">
+                        <h6 class="fw-bold text-muted text-uppercase mb-3" style="letter-spacing: 0.5px; font-size: 0.75rem;">
+                            <i class="bi bi-stars me-1 text-warning"></i> Platform & Support
+                        </h6>
+                        <div class="row g-3">
+                            <div class="col-12 col-md-6 col-lg-4 explore-item" data-keywords="book demo walk-through preview enterprise tour features">
+                                <a href="/book-demo" class="explore-feature-card">
+                                    <div class="explore-feature-icon" style="background: rgba(245, 158, 11, 0.1); color: #f59e0b;">
+                                        <i class="bi bi-award-fill"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <strong class="d-block text-dark">Book Platform Demo</strong>
+                                        <span class="text-muted small">Experience advanced People+ HR capabilities and schedule live expert walk-throughs.</span>
+                                    </div>
+                                    <i class="bi bi-chevron-right text-muted opacity-50"></i>
+                                </a>
+                            </div>
+
+                            <div class="col-12 col-md-6 col-lg-4 explore-item" data-keywords="support helpdesk hr emergency contact feedback ticket">
+                                <a href="mailto:support@peoplepulsehr.com" class="explore-feature-card">
+                                    <div class="explore-feature-icon" style="background: rgba(100, 116, 139, 0.1); color: #64748b;">
+                                        <i class="bi bi-headset"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <strong class="d-block text-dark">HR Helpdesk & Inquiries</strong>
+                                        <span class="text-muted small">Contact HR operations for attendance disputes, policy queries, and assistance.</span>
+                                    </div>
+                                    <i class="bi bi-chevron-right text-muted opacity-50"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="noExploreResults" class="text-center py-5 text-muted d-none">
+                        <i class="bi bi-search fs-1 text-secondary opacity-50 d-block mb-2"></i>
+                        <strong>No features found matching your search.</strong>
+                        <div class="small">Try typing keywords like 'muster', 'leaves', 'holiday', or 'shift'.</div>
+                    </div>
+
+                </section>
+
+
+                <!-- ===================================================================
+                     TAB 4: ENGAGE (Culture, Celebrations, Daily Pulse & Kudos)
+                     =================================================================== -->
+                <section id="mobileTab-engage" class="mobile-tab-pane" aria-labelledby="tab-engage">
+
+                    <!-- Engage Hero Card -->
+                    <div class="card border-0 shadow-sm mb-4 rounded-3" style="background: linear-gradient(135deg, #fdf2f8 0%, #fef3c7 100%); border-left: 5px solid #ec4899 !important;">
+                        <div class="card-body p-3 p-md-4">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <span class="badge bg-danger px-3 py-1 rounded-pill small">
+                                    <i class="bi bi-chat-heart-fill me-1"></i> People & Culture
+                                </span>
+                                <span class="badge bg-white text-secondary border small">Community Feed</span>
+                            </div>
+                            <h5 class="fw-bold text-dark mb-1">Engage, Connect & Celebrate</h5>
+                            <p class="text-muted small mb-0">Record your daily work pulse, send birthday wishes, celebrate milestones, and recognize peers with kudos.</p>
+                        </div>
+                    </div>
+
+                    <!-- 1. Interactive Daily Mood & Pulse Check-In -->
+                    <div class="peoplepulse-card mb-4">
+                        <div class="peoplepulse-card-header">
+                            <h6><i class="bi bi-emoji-smile me-2 text-warning"></i>Daily Mood & Pulse Check-in</h6>
+                            <span class="badge bg-primary-subtle text-primary border">Today's Pulse</span>
+                        </div>
+                        <div class="peoplepulse-card-body p-3 p-md-4">
+                            <div class="text-center mb-3">
+                                <h6 class="fw-bold text-dark mb-1">How are you feeling today, <span th:text="${currentUser.fullName}">Alex</span>?</h6>
+                                <p class="text-muted small mb-0">Tap your mood to share how your day is going with People+ HR</p>
+                            </div>
+
+                            <div class="d-flex flex-wrap gap-2 justify-content-center mb-3">
+                                <div class="engage-pulse-btn" onclick="recordPulse('energized', '🤩 Energized', this)">
+                                    <div class="fs-2 mb-1">🤩</div>
+                                    <div class="small fw-semibold text-dark">Energized</div>
+                                </div>
+                                <div class="engage-pulse-btn" onclick="recordPulse('productive', '😊 Productive', this)">
+                                    <div class="fs-2 mb-1">😊</div>
+                                    <div class="small fw-semibold text-dark">Productive</div>
+                                </div>
+                                <div class="engage-pulse-btn" onclick="recordPulse('coffee', '☕ Need Coffee', this)">
+                                    <div class="fs-2 mb-1">☕</div>
+                                    <div class="small fw-semibold text-dark">Need Coffee</div>
+                                </div>
+                                <div class="engage-pulse-btn" onclick="recordPulse('calm', '🧘 Focused & Calm', this)">
+                                    <div class="fs-2 mb-1">🧘</div>
+                                    <div class="small fw-semibold text-dark">Focused</div>
+                                </div>
+                            </div>
+
+                            <!-- Recorded Feedback Banner -->
+                            <div id="pulseRecordedAlert" class="alert alert-success d-none py-2 px-3 text-center small rounded-pill mb-0">
+                                <i class="bi bi-stars text-warning me-1"></i>
+                                <span id="pulseRecordedMsg">Thanks for sharing your pulse! Have a productive day at People+ HR.</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 g-md-4 mb-4">
+                        
+                        <!-- 2. Upcoming Celebrations & Milestones This Week -->
+                        <div class="col-12 col-md-6">
+                            <div class="peoplepulse-card h-100">
+                                <div class="peoplepulse-card-header">
+                                    <h6><i class="bi bi-gift-fill me-2 text-danger"></i>Celebrations This Week</h6>
+                                    <span class="badge bg-danger-subtle text-danger border">Milestones</span>
+                                </div>
+                                <div class="peoplepulse-card-body p-3">
+                                    
+                                    <!-- Birthday 1 (Today) -->
+                                    <div class="p-3 bg-light rounded-3 border mb-2 d-flex align-items-center justify-content-between">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="rounded-circle bg-danger-subtle text-danger d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; font-size: 1.2rem;">
+                                                🎂
+                                            </div>
+                                            <div>
+                                                <strong class="d-block text-dark small">Sarah Jenkins</strong>
+                                                <span class="text-danger small fw-semibold">Birthday Today! 🎉</span>
+                                            </div>
+                                        </div>
+                                        <button type="button" class="btn btn-outline-danger btn-sm rounded-pill px-3" onclick="sendCelebrationWish('Sarah Jenkins', 'Birthday')">
+                                            Wish 🎉
+                                        </button>
+                                    </div>
+
+                                    <!-- Work Anniversary (Milestone) -->
+                                    <div class="p-3 bg-light rounded-3 border mb-2 d-flex align-items-center justify-content-between">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="rounded-circle bg-warning-subtle text-warning d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; font-size: 1.2rem;">
+                                                🌟
+                                            </div>
+                                            <div>
+                                                <strong class="d-block text-dark small">Priya Sharma</strong>
+                                                <span class="text-warning small fw-semibold">3-Year Work Anniversary 🏆</span>
+                                            </div>
+                                        </div>
+                                        <button type="button" class="btn btn-outline-warning text-dark btn-sm rounded-pill px-3" onclick="sendCelebrationWish('Priya Sharma', 'Work Anniversary')">
+                                            Celebrate 🌟
+                                        </button>
+                                    </div>
+
+                                    <!-- Birthday 2 (Upcoming) -->
+                                    <div class="p-3 bg-light rounded-3 border d-flex align-items-center justify-content-between">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="rounded-circle bg-primary-subtle text-primary d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; font-size: 1.2rem;">
+                                                🎈
+                                            </div>
+                                            <div>
+                                                <strong class="d-block text-dark small">Amit Verma</strong>
+                                                <span class="text-muted small">Birthday on 04 November</span>
+                                            </div>
+                                        </div>
+                                        <button type="button" class="btn btn-outline-primary btn-sm rounded-pill px-3" onclick="sendCelebrationWish('Amit Verma', 'Birthday')">
+                                            Wish 🎈
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 3. Peer Recognition & Kudos Wall -->
+                        <div class="col-12 col-md-6">
+                            <div class="peoplepulse-card h-100">
+                                <div class="peoplepulse-card-header">
+                                    <h6><i class="bi bi-trophy me-2 text-warning"></i>Peer Kudos & High-Fives</h6>
+                                    <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-3" onclick="openKudosPrompt()">
+                                        <i class="bi bi-hand-thumbs-up me-1"></i> Give Kudos
+                                    </button>
+                                </div>
+                                <div class="peoplepulse-card-body p-3">
+                                    <div class="p-3 bg-light rounded-3 border mb-2">
+                                        <div class="d-flex align-items-center justify-content-between mb-1">
+                                            <span class="small fw-bold text-primary">👏 Alex Smith &rarr; David Patel</span>
+                                            <span class="text-muted" style="font-size: 0.7rem;">Yesterday</span>
+                                        </div>
+                                        <p class="text-muted small mb-0">"Huge thank you for the seamless help deploying the mobile responsive fixes on staging!"</p>
+                                    </div>
+
+                                    <div class="p-3 bg-light rounded-3 border">
+                                        <div class="d-flex align-items-center justify-content-between mb-1">
+                                            <span class="small fw-bold text-success">🌟 HR Operations &rarr; IT Team</span>
+                                            <span class="text-muted" style="font-size: 0.7rem;">2 days ago</span>
+                                        </div>
+                                        <p class="text-muted small mb-0">"Flawless biometric integration and zero downtime throughout the month. Stellar work!"</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- 4. Company Announcements & Bulletin Board -->
+                    <div class="peoplepulse-card">
+                        <div class="peoplepulse-card-header">
+                            <h6><i class="bi bi-megaphone me-2 text-primary"></i>Company Announcements & Notice Board</h6>
+                            <span class="badge bg-light text-dark border">Official HR Updates</span>
+                        </div>
+                        <div class="peoplepulse-card-body p-3">
+                            <div class="row g-3">
+                                <div class="col-12 col-md-4">
+                                    <div class="p-3 bg-light rounded-3 border h-100">
+                                        <div class="d-flex align-items-center justify-content-between mb-2">
+                                            <span class="badge bg-primary px-2 py-1">Company All-Hands</span>
+                                            <span class="text-muted small" style="font-size: 0.7rem;">Nov 06</span>
+                                        </div>
+                                        <strong class="d-block text-dark mb-1">Annual Q4 Townhall Meeting</strong>
+                                        <p class="text-muted small mb-0">Join leadership at 4:00 PM IST to review product achievements, quarterly metrics, and award announcements.</p>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-4">
+                                    <div class="p-3 bg-light rounded-3 border h-100">
+                                        <div class="d-flex align-items-center justify-content-between mb-2">
+                                            <span class="badge bg-success px-2 py-1">Wellness Initiative</span>
+                                            <span class="text-muted small" style="font-size: 0.7rem;">Ongoing</span>
+                                        </div>
+                                        <strong class="d-block text-dark mb-1">November Wellness & Ergonomics</strong>
+                                        <p class="text-muted small mb-0">Complimentary 1-on-1 ergonomic desk assessments and virtual mindfulness sessions are now open for scheduling.</p>
+                                    </div>
+                                </div>
+                                <div class="col-12 col-md-4">
+                                    <div class="p-3 bg-light rounded-3 border h-100">
+                                        <div class="d-flex align-items-center justify-content-between mb-2">
+                                            <span class="badge bg-warning text-dark px-2 py-1">Tech Excellence</span>
+                                            <span class="text-muted small" style="font-size: 0.7rem;">Completed</span>
+                                        </div>
+                                        <strong class="d-block text-dark mb-1">Hackathon 2026 Champions</strong>
+                                        <p class="text-muted small mb-0">Congratulations to Team Alpha for securing 1st place with their AI-driven workforce attendance optimization project!</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </section>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- ===================================================================
+         PEOPLE+ HR NATIVE MOBILE APP BOTTOM NAVIGATION BAR (d-lg-none)
+         Tabs: Home, Action, Explore, Engage
+         =================================================================== -->
+    <nav class="mobile-app-bottom-nav d-lg-none" id="mobileAppBottomNav" aria-label="Mobile Bottom Navigation">
+        <a href="#home" class="mobile-nav-item active" data-tab="home" onclick="switchMobileTab('home', event)">
+            <div class="mobile-nav-icon-wrapper">
+                <i class="bi bi-house-door-fill"></i>
+            </div>
+            <span class="mobile-nav-label">Home</span>
+        </a>
+        <a href="#action" class="mobile-nav-item" data-tab="action" onclick="switchMobileTab('action', event)">
+            <div class="mobile-nav-icon-wrapper">
+                <i class="bi bi-lightning-charge-fill"></i>
+                <span class="mobile-nav-badge">!</span>
+            </div>
+            <span class="mobile-nav-label">Action</span>
+        </a>
+        <a href="#explore" class="mobile-nav-item" data-tab="explore" onclick="switchMobileTab('explore', event)">
+            <div class="mobile-nav-icon-wrapper">
+                <i class="bi bi-compass-fill"></i>
+            </div>
+            <span class="mobile-nav-label">Explore</span>
+        </a>
+        <a href="#engage" class="mobile-nav-item" data-tab="engage" onclick="switchMobileTab('engage', event)">
+            <div class="mobile-nav-icon-wrapper">
+                <i class="bi bi-chat-heart-fill"></i>
+                <span class="mobile-nav-dot"></span>
+            </div>
+            <span class="mobile-nav-label">Engage</span>
+        </a>
+    </nav>
+
+    <!-- Modal for Giving Kudos -->
+    <div class="modal fade" id="kudosModal" tabindex="-1" aria-labelledby="kudosModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-4">
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold" id="kudosModalLabel">
+                        <i class="bi bi-trophy-fill text-warning me-2"></i>Give Kudos to a Colleague
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form onsubmit="submitKudo(event)">
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold text-muted">Teammate Name</label>
+                            <input type="text" id="kudosRecipient" class="form-control" placeholder="e.g. David Patel, Sarah Jenkins..." required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small fw-semibold text-muted">Your Appreciation Note</label>
+                            <textarea id="kudosMessage" class="form-control" rows="3" placeholder="Thank them for great collaboration, punctuality, or support..." required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 py-2 rounded-pill fw-semibold">
+                            <i class="bi bi-send me-1"></i> Send High-Five 👏
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/responsive.js}"></script>
+    <script th:src="@{/js/attendance-geo.js}"></script>
+    <script>
+        // Digital Live Clock
+        function updateClock() {
+            const now = new Date();
+            const clockEl = document.getElementById('liveClock');
+            if (clockEl) {
+                clockEl.innerText = now.toLocaleTimeString();
+            }
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // Mobile App Toast Helper
+        function showMobileToast(message, bgClass = 'bg-primary') {
+            const toastEl = document.getElementById('mobileAppToast');
+            const msgEl = document.getElementById('mobileToastMessage');
+            if (!toastEl || !msgEl) return;
+
+            toastEl.className = 'toast align-items-center text-white border-0 shadow-lg rounded-3 ' + bgClass;
+            msgEl.innerHTML = message;
+            const toast = new bootstrap.Toast(toastEl, { delay: 3500 });
+            toast.show();
+        }
+
+        // Mobile Tab Switcher (Home, Action, Explore, Engage)
+        function switchMobileTab(tabName, evt) {
+            if (evt && evt.preventDefault) {
+                evt.preventDefault();
+            }
+            const validTabs = ['home', 'action', 'explore', 'engage'];
+            if (!validTabs.includes(tabName)) {
+                tabName = 'home';
+            }
+
+            // 1. Toggle Tab Panes
+            document.querySelectorAll('.mobile-tab-pane').forEach(pane => {
+                pane.classList.remove('active');
+            });
+            const targetPane = document.getElementById('mobileTab-' + tabName);
+            if (targetPane) {
+                targetPane.classList.add('active');
+            }
+
+            // 2. Toggle Bottom Nav Active State
+            document.querySelectorAll('.mobile-app-bottom-nav .mobile-nav-item').forEach(item => {
+                if (item.getAttribute('data-tab') === tabName) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+
+            // 3. Update Top Header Title Dynamically
+            const titleMap = {
+                'home': { title: 'Employee Self Service', sub: 'Daily Work & Presence Center' },
+                'action': { title: 'Action Center', sub: 'Instant Self-Service & Attendance Desk' },
+                'explore': { title: 'Explore Directory', sub: 'Module Catalog & Enterprise Policies' },
+                'engage': { title: 'Engage & Connect', sub: 'Culture, Celebrations & Daily Pulse' }
+            };
+            const titleEl = document.getElementById('mobilePageTitle');
+            const subEl = document.getElementById('mobilePageSubtitle');
+            if (titleEl && titleMap[tabName]) {
+                titleEl.textContent = titleMap[tabName].title;
+            }
+            if (subEl && titleMap[tabName]) {
+                subEl.textContent = titleMap[tabName].sub;
+            }
+
+            // 4. Update Window URL Hash
+            if (window.history && window.history.replaceState) {
+                window.history.replaceState(null, null, '#' + tabName);
+            } else {
+                window.location.hash = '#' + tabName;
+            }
+
+            // 5. Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Handle initial load and hash navigation
+        window.addEventListener('DOMContentLoaded', () => {
+            const hash = (window.location.hash || '').replace('#', '').toLowerCase();
+            if (['home', 'action', 'explore', 'engage'].includes(hash)) {
+                switchMobileTab(hash);
+            }
+        });
+        window.addEventListener('hashchange', () => {
+            const hash = (window.location.hash || '').replace('#', '').toLowerCase();
+            if (['home', 'action', 'explore', 'engage'].includes(hash)) {
+                switchMobileTab(hash);
+            }
+        });
+
+        // Explore Filter Functionality
+        function filterExploreCards() {
+            const input = document.getElementById('exploreSearchInput');
+            if (!input) return;
+            const query = input.value.toLowerCase().trim();
+            const items = document.querySelectorAll('.explore-item');
+            let visibleCount = 0;
+
+            items.forEach(item => {
+                const keywords = (item.getAttribute('data-keywords') || '').toLowerCase();
+                const text = item.innerText.toLowerCase();
+                if (!query || keywords.includes(query) || text.includes(query)) {
+                    item.classList.remove('d-none');
+                    visibleCount++;
+                } else {
+                    item.classList.add('d-none');
+                }
+            });
+
+            // Also hide category headers if all children are hidden
+            document.querySelectorAll('.explore-category-section').forEach(sec => {
+                const visibleInSec = sec.querySelectorAll('.explore-item:not(.d-none)').length;
+                sec.style.display = visibleInSec === 0 ? 'none' : '';
+            });
+
+            const noResults = document.getElementById('noExploreResults');
+            if (noResults) {
+                if (visibleCount === 0) {
+                    noResults.classList.remove('d-none');
+                } else {
+                    noResults.classList.add('d-none');
+                }
+            }
+        }
+
+        // Engage Pulse Interaction
+        function recordPulse(mood, label, el) {
+            document.querySelectorAll('.engage-pulse-btn').forEach(btn => btn.classList.remove('selected'));
+            if (el) el.classList.add('selected');
+
+            const alertEl = document.getElementById('pulseRecordedAlert');
+            const msgEl = document.getElementById('pulseRecordedMsg');
+            if (alertEl && msgEl) {
+                msgEl.innerHTML = `<strong>${label}</strong> recorded! Thanks for checking in today.`;
+                alertEl.classList.remove('d-none');
+            }
+            showMobileToast(`<i class="bi bi-stars me-2 fs-5"></i> Mood recorded: ${label}!`, 'bg-success');
+        }
+
+        // Send Celebration Wishes
+        function sendCelebrationWish(name, eventType) {
+            showMobileToast(`<i class="bi bi-gift-fill me-2 fs-5"></i> Sent warm ${eventType} wishes to ${name}! 🎉`, 'bg-danger');
+        }
+
+        // Attendance Regularization Submit Handler
+        function submitRegularization(e) {
+            e.preventDefault();
+            const date = document.getElementById('regularizeDate').value || 'Selected Date';
+            showMobileToast(`<i class="bi bi-check-circle-fill me-2 fs-5"></i> Regularization request for ${date} submitted for manager review!`, 'bg-success');
+            e.target.reset();
+        }
+
+        // Toggle Work From Home Mode
+        function toggleWorkMode() {
+            const label = document.getElementById('workModeLabel');
+            if (label) {
+                if (label.innerText.includes('Office')) {
+                    label.innerText = '🏡 Working Remotely (WFH)';
+                    label.className = 'text-success fw-bold small';
+                    showMobileToast(`<i class="bi bi-house-door-fill me-2 fs-5"></i> Switched to Remote / WFH mode for today!`, 'bg-info');
+                } else {
+                    label.innerText = '🏢 Office Desk (In-Person)';
+                    label.className = 'text-muted small';
+                    showMobileToast(`<i class="bi bi-building me-2 fs-5"></i> Work mode set to Office Desk.`, 'bg-primary');
+                }
+            }
+        }
+
+        // Open Kudos Modal
+        function openKudosPrompt() {
+            const modal = new bootstrap.Modal(document.getElementById('kudosModal'));
+            modal.show();
+        }
+
+        // Submit Kudos
+        function submitKudo(e) {
+            e.preventDefault();
+            const recipient = document.getElementById('kudosRecipient').value;
+            const modalEl = document.getElementById('kudosModal');
+            const modal = bootstrap.Modal.getInstance(modalEl);
+            if (modal) modal.hide();
+            showMobileToast(`<i class="bi bi-hand-thumbs-up-fill me-2 fs-5"></i> Kudos and High-Five sent to ${recipient}! 👏`, 'bg-warning text-dark');
+            e.target.reset();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Holiday Calendar &bull; PeoplePulse HR</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script th:src="@{/js/theme.js}"></script>
+    <style>
+        .holiday-date-badge {
+            width: 52px;
+            height: 52px;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            line-height: 1.1;
+            flex-shrink: 0;
+            background: linear-gradient(135deg, var(--peoplepulse-primary-light), rgba(59, 130, 246, 0.1));
+            color: var(--peoplepulse-primary);
+            border: 1px solid rgba(27, 79, 194, 0.15);
+        }
+        .holiday-date-badge .month {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+        .holiday-date-badge .day {
+            font-size: 1.25rem;
+            font-weight: 800;
+        }
+        .holiday-card-featured {
+            background: linear-gradient(135deg, #111c38 0%, #1b4fc2 100%);
+            color: #ffffff;
+            border-radius: 14px;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .holiday-card-featured::after {
+            content: '';
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 106, 0, 0.25) 0%, rgba(255, 106, 0, 0) 70%);
+            top: -40px;
+            right: -40px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="peoplepulse-wrapper">
+
+        <!-- PeoplePulse HR Sidebar Navigation -->
+        <aside class="peoplepulse-sidebar">
+            <div class="peoplepulse-sidebar-brand d-flex align-items-center justify-content-between">
+                <a th:href="${currentUser.role.name() == 'ROLE_ADMIN' ? '/admin/dashboard' : (currentUser.role.name() == 'ROLE_MANAGER' ? '/manager/dashboard' : '/dashboard')}" class="d-flex align-items-center text-white text-decoration-none">
+                    <div class="people-plus-logo-icon me-2">
+                        <svg width="32" height="32" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="34" height="34" rx="10" fill="url(#ppLogoGrad)"/>
+                            <rect x="0.5" y="0.5" width="33" height="33" rx="9.5" stroke="rgba(255,255,255,0.15)"/>
+                            <circle cx="13.5" cy="11.5" r="4.2" fill="#ffffff"/>
+                            <path d="M6 25.5C6 21.2 9.3 17.5 13.5 17.5C17.7 17.5 21 21.2 21 25.5H6Z" fill="#ffffff" fill-opacity="0.95"/>
+                            <circle cx="24.5" cy="11" r="6" fill="#ff5e3a"/>
+                            <path d="M24.5 7.8V14.2M21.3 11H27.7" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round"/>
+                            <defs>
+                                <linearGradient id="ppLogoGrad" x1="0" y1="0" x2="34" y2="34" gradientUnits="userSpaceOnUse">
+                                    <stop stop-color="#1b4fc2"/>
+                                    <stop offset="1" stop-color="#0a1a44"/>
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+                    <span class="people-plus-brand">
+                        <span class="brand-word-people">People</span><span class="brand-plus-sign">+</span>
+                        <span class="brand-word-hr">HR</span>
+                    </span>
+                </a>
+                <button type="button" class="btn btn-link text-white-50 p-0 d-lg-none" onclick="toggleSidebar()" aria-label="Close sidebar">
+                    <i class="bi bi-x-lg fs-5"></i>
+                </button>
+            </div>
+
+            <ul class="peoplepulse-nav">
+                <li class="peoplepulse-nav-heading">Workspace</li>
+                <li class="peoplepulse-nav-item" th:if="${currentUser.role.name() == 'ROLE_EMPLOYEE'}">
+                    <a href="/dashboard" class="peoplepulse-nav-link">
+                        <i class="bi bi-grid-1x2"></i> Dashboard
+                    </a>
+                </li>
+                <li class="peoplepulse-nav-item" th:if="${currentUser.role.name() == 'ROLE_ADMIN'}">
+                    <a href="/admin/dashboard" class="peoplepulse-nav-link">
+                        <i class="bi bi-speedometer2"></i> Overview
+                    </a>
+                </li>
+                <li class="peoplepulse-nav-item" th:if="${currentUser.role.name() == 'ROLE_MANAGER'}">
+                    <a href="/manager/dashboard" class="peoplepulse-nav-link">
+                        <i class="bi bi-speedometer2"></i> Team Overview
+                    </a>
+                </li>
+                <li class="peoplepulse-nav-item">
+                    <a href="/attendance/history" class="peoplepulse-nav-link">
+                        <i class="bi bi-calendar3"></i> Attendance Log
+                    </a>
+                </li>
+
+                <li class="peoplepulse-nav-heading">Time & Leave</li>
+                <li class="peoplepulse-nav-item" th:if="${currentUser.role.name() == 'ROLE_EMPLOYEE'}">
+                    <a href="/leaves/apply" class="peoplepulse-nav-link">
+                        <i class="bi bi-calendar-plus"></i> Leave Balances
+                    </a>
+                </li>
+                <li class="peoplepulse-nav-item" th:if="${currentUser.role.name() != 'ROLE_EMPLOYEE'}">
+                    <a href="/manager/leaves" class="peoplepulse-nav-link">
+                        <i class="bi bi-calendar-check"></i> Leave Review
+                    </a>
+                </li>
+                <li class="peoplepulse-nav-item">
+                    <a href="/holidays" class="peoplepulse-nav-link active">
+                        <i class="bi bi-calendar-heart"></i> Holiday Calendar
+                    </a>
+                </li>
+                <li class="peoplepulse-nav-item" th:if="${currentUser.role.name() == 'ROLE_ADMIN'}">
+                    <a href="/admin/shifts" class="peoplepulse-nav-link">
+                        <i class="bi bi-calendar-range"></i> Shift Roster
+                    </a>
+                </li>
+                <li class="peoplepulse-nav-item">
+                    <a href="/reports/summary" class="peoplepulse-nav-link">
+                        <i class="bi bi-file-earmark-spreadsheet"></i> Timesheets
+                    </a>
+                </li>
+            </ul>
+
+            <div class="peoplepulse-sidebar-footer">
+                <div class="peoplepulse-user-badge">
+                    <div class="peoplepulse-avatar">
+                        <span th:text="${#strings.substring(currentUser.fullName, 0, 1)}">A</span>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <div class="text-white fw-semibold text-truncate small" th:text="${currentUser.fullName}">Alex Smith</div>
+                        <div class="text-white-50" style="font-size: 0.72rem;" th:text="${currentUser.role.name().replace('ROLE_', '')}">EMPLOYEE</div>
+                    </div>
+                    <form th:action="@{/logout}" method="post" class="m-0">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                        <button type="submit" class="btn btn-link text-white-50 p-1 hover-white" title="Logout">
+                            <i class="bi bi-box-arrow-right fs-5"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="peoplepulse-main">
+
+            <header class="peoplepulse-topbar">
+                <div class="d-flex align-items-center">
+                    <button type="button" class="btn btn-outline-secondary btn-sm d-lg-none me-2" onclick="toggleSidebar()" aria-label="Toggle navigation">
+                        <i class="bi bi-list fs-5"></i>
+                    </button>
+                    <div>
+                        <h5 class="fw-bold mb-0 text-dark">Company Holiday Calendar</h5>
+                        <span class="text-muted small d-none d-sm-inline">Official annual holidays, regional festivals, and company off-days &bull; 2026</span>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <button type="button" class="btn btn-outline-secondary btn-sm rounded-circle theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle theme" title="Toggle Light/Dark Theme">
+                        <i class="bi bi-moon-stars-fill theme-icon-dark"></i>
+                        <i class="bi bi-sun-fill theme-icon-light d-none"></i>
+                    </button>
+                    <button th:if="${currentUser.role.name() == 'ROLE_ADMIN'}" type="button" class="btn btn-primary btn-sm rounded-pill px-3 fw-semibold" data-bs-toggle="modal" data-bs-target="#addHolidayModal">
+                        <i class="bi bi-plus-lg me-1"></i> Add Holiday
+                    </button>
+                    <a th:href="${currentUser.role.name() == 'ROLE_ADMIN' ? '/admin/dashboard' : (currentUser.role.name() == 'ROLE_MANAGER' ? '/manager/dashboard' : '/dashboard')}" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
+                        <i class="bi bi-arrow-left me-1"></i> Dashboard
+                    </a>
+                </div>
+            </header>
+
+            <main class="p-3 p-md-4">
+
+                <!-- Flash Alerts -->
+                <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show rounded-3 border-0 shadow-sm mb-4" role="alert">
+                    <i class="bi bi-check-circle-fill me-2 align-middle"></i>
+                    <span th:text="${successMessage}">Operation successful!</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show rounded-3 border-0 shadow-sm mb-4" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2 align-middle"></i>
+                    <span th:text="${errorMessage}">An error occurred.</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+
+                <!-- Top Highlight Row -->
+                <div class="row g-3 mb-4">
+                    
+                    <!-- Next Upcoming Holiday Countdown Card -->
+                    <div class="col-lg-7 col-12">
+                        <div class="holiday-card-featured shadow-sm h-100 d-flex flex-column justify-content-between">
+                            <div class="position-relative" style="z-index: 2;">
+                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                    <span class="badge bg-white text-primary px-3 py-1 rounded-pill fw-semibold small">
+                                        <i class="bi bi-bell-fill me-1 text-warning"></i> Next Upcoming Holiday
+                                    </span>
+                                    <span class="text-white-50 small" th:text="${#temporals.format(today, 'dd MMMM yyyy')}">26 October 2026</span>
+                                </div>
+                                <div th:if="${nextHoliday != null}">
+                                    <h3 class="fw-bold mb-1" th:text="${nextHoliday.name}">Diwali (Deepavali)</h3>
+                                    <p class="text-white-50 mb-3" th:text="${nextHoliday.description != null ? nextHoliday.description : 'Official Company Observance'}">Grand Festival of Lights</p>
+                                    <div class="d-flex align-items-center gap-3 flex-wrap">
+                                        <div class="bg-white bg-opacity-10 px-3 py-2 rounded-3 border border-white border-opacity-25">
+                                            <span class="d-block text-white-50" style="font-size: 0.72rem;">DATE</span>
+                                            <strong class="text-white" th:text="${nextHoliday.formattedDate}">08 Nov 2026</strong>
+                                        </div>
+                                        <div class="bg-white bg-opacity-10 px-3 py-2 rounded-3 border border-white border-opacity-25">
+                                            <span class="d-block text-white-50" style="font-size: 0.72rem;">DAY</span>
+                                            <strong class="text-white" th:text="${nextHoliday.dayOfWeek}">Sunday</strong>
+                                        </div>
+                                        <div class="bg-warning text-dark px-3 py-2 rounded-3 fw-bold">
+                                            <i class="bi bi-hourglass-split me-1"></i>
+                                            <span th:text="${nextHoliday.daysRemaining == 0 ? 'Today!' : (nextHoliday.daysRemaining == 1 ? 'Tomorrow!' : 'In ' + nextHoliday.daysRemaining + ' days')}">In 13 days</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div th:if="${nextHoliday == null}">
+                                    <h4 class="fw-bold mb-1">No Upcoming Holidays</h4>
+                                    <p class="text-white-50 mb-0">All corporate holidays for the current cycle have concluded.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Statistics & Leave Quick Links -->
+                    <div class="col-lg-5 col-12">
+                        <div class="row g-3 h-100">
+                            <div class="col-6">
+                                <div class="peoplepulse-stat-card h-100">
+                                    <div class="peoplepulse-stat-icon primary">
+                                        <i class="bi bi-calendar-event"></i>
+                                    </div>
+                                    <div>
+                                        <span class="text-muted small fw-semibold text-uppercase">Total Holidays</span>
+                                        <h3 class="fw-bold text-dark mb-0" th:text="${allHolidays.size()}">14</h3>
+                                        <span class="text-muted" style="font-size: 0.72rem;">Year 2026</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="peoplepulse-stat-card h-100">
+                                    <div class="peoplepulse-stat-icon warning">
+                                        <i class="bi bi-clock-history"></i>
+                                    </div>
+                                    <div>
+                                        <span class="text-muted small fw-semibold text-uppercase">Upcoming</span>
+                                        <h3 class="fw-bold text-dark mb-0" th:text="${upcomingHolidays.size()}">4</h3>
+                                        <span class="text-muted" style="font-size: 0.72rem;">Remaining in 2026</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="peoplepulse-card p-3 d-flex align-items-center justify-content-between">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="rounded-3 p-2 bg-primary bg-opacity-10 text-primary">
+                                            <i class="bi bi-calendar-plus fs-4"></i>
+                                        </div>
+                                        <div>
+                                            <strong class="d-block text-dark">Planning a Vacation?</strong>
+                                            <span class="text-muted small">Combine weekends & holidays with your available leave balances.</span>
+                                        </div>
+                                    </div>
+                                    <a href="/leaves/apply" class="btn btn-outline-primary btn-sm rounded-pill px-3 flex-shrink-0">
+                                        Apply Leave
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Holiday Roster Table Card -->
+                <div class="peoplepulse-card">
+                    <div class="peoplepulse-card-header">
+                        <div>
+                            <h6 class="fw-bold mb-0 text-dark">
+                                <i class="bi bi-calendar-week me-2 text-primary"></i>Official 2026 Holiday Schedule
+                            </h6>
+                            <span class="text-muted small">Paid corporate days off & regional festival observances</span>
+                        </div>
+                        <span class="badge bg-light text-dark border px-3 py-2 small" th:text="${allHolidays.size() + ' holidays on record'}">
+                            14 holidays on record
+                        </span>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table peoplepulse-table table-mobile-card align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Day</th>
+                                    <th>Holiday Name</th>
+                                    <th>Category</th>
+                                    <th>Mandatory</th>
+                                    <th>Status</th>
+                                    <th th:if="${currentUser.role.name() == 'ROLE_ADMIN'}" class="text-end">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="h : ${allHolidays}" th:classappend="${h.isPast() ? 'opacity-75' : ''}">
+                                    <td data-label="Date">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <div class="holiday-date-badge" th:style="${h.isPast() ? 'filter: grayscale(1); opacity: 0.7;' : ''}">
+                                                <span class="month" th:text="${#temporals.format(h.holidayDate, 'MMM')}">JAN</span>
+                                                <span class="day" th:text="${#temporals.format(h.holidayDate, 'dd')}">01</span>
+                                            </div>
+                                            <div>
+                                                <strong class="text-dark d-block" th:text="${h.formattedDate}">01 Jan 2026</strong>
+                                                <span class="text-muted small" th:text="${h.dayOfWeek}">Thursday</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td data-label="Day" class="fw-semibold text-secondary" th:text="${h.dayOfWeek}">Thursday</td>
+                                    <td data-label="Holiday Name">
+                                        <div class="fw-bold text-dark" th:text="${h.name}">New Year's Day</div>
+                                        <div class="text-muted small" th:text="${h.description != null ? h.description : '-'}">Celebration of the New Year</div>
+                                    </td>
+                                    <td data-label="Category">
+                                        <span th:if="${h.holidayType == 'National Holiday'}" class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1">
+                                            <i class="bi bi-flag-fill me-1"></i> National
+                                        </span>
+                                        <span th:if="${h.holidayType == 'Festival'}" class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle px-2 py-1">
+                                            <i class="bi bi-stars me-1"></i> Festival
+                                        </span>
+                                        <span th:if="${h.holidayType != 'National Holiday' and h.holidayType != 'Festival'}" class="badge bg-secondary-subtle text-secondary border border-secondary-subtle px-2 py-1" th:text="${h.holidayType}">
+                                            Restricted
+                                        </span>
+                                    </td>
+                                    <td data-label="Mandatory">
+                                        <span th:if="${h.mandatory}" class="badge bg-success-subtle text-success border border-success-subtle">
+                                            <i class="bi bi-check-circle-fill me-1"></i> Mandatory Off
+                                        </span>
+                                        <span th:if="${!h.mandatory}" class="badge bg-light text-muted border">
+                                            Optional / Restricted
+                                        </span>
+                                    </td>
+                                    <td data-label="Status">
+                                        <span th:if="${h.isPast()}" class="badge bg-secondary-subtle text-secondary">
+                                            <i class="bi bi-check2-all me-1"></i> Completed
+                                        </span>
+                                        <span th:if="${!h.isPast() and h.daysRemaining == 0}" class="badge bg-success text-white">
+                                            <i class="bi bi-sun-fill me-1"></i> Today!
+                                        </span>
+                                        <span th:if="${!h.isPast() and h.daysRemaining > 0}" class="badge bg-primary text-white" th:text="${'In ' + h.daysRemaining + ' days'}">
+                                            In 13 days
+                                        </span>
+                                    </td>
+                                    <td th:if="${currentUser.role.name() == 'ROLE_ADMIN'}" data-label="Action" class="text-end">
+                                        <form th:action="@{'/admin/holidays/' + ${h.id} + '/delete'}" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this holiday?');">
+                                            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                            <button type="submit" class="btn btn-outline-danger btn-sm p-1 px-2 rounded-pill" title="Delete Holiday">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                <tr th:if="${#lists.isEmpty(allHolidays)}">
+                                    <td colspan="7" class="text-center text-muted py-5">
+                                        <i class="bi bi-calendar-x fs-1 d-block mb-2 text-muted"></i>
+                                        No holidays registered in the calendar yet.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- Admin Add Holiday Modal -->
+    <div th:if="${currentUser.role.name() == 'ROLE_ADMIN'}" class="modal fade" id="addHolidayModal" tabindex="-1" aria-labelledby="addHolidayModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <form th:action="@{/admin/holidays/add}" method="post">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <div class="modal-header border-0 pb-0">
+                        <h5 class="modal-title fw-bold text-dark" id="addHolidayModalLabel">
+                            <i class="bi bi-calendar-plus text-primary me-2"></i>Register Company Holiday
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="name" class="form-label small fw-semibold">Holiday Name</label>
+                            <input type="text" id="name" name="name" class="form-control" placeholder="e.g. Diwali / Republic Day" required>
+                        </div>
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label for="holidayDate" class="form-label small fw-semibold">Date</label>
+                                <input type="date" id="holidayDate" name="holidayDate" class="form-control" required>
+                            </div>
+                            <div class="col-6">
+                                <label for="holidayType" class="form-label small fw-semibold">Category</label>
+                                <select id="holidayType" name="holidayType" class="form-select">
+                                    <option value="National Holiday">National Holiday</option>
+                                    <option value="Festival">Festival</option>
+                                    <option value="Restricted Holiday">Restricted Holiday</option>
+                                    <option value="Corporate Holiday">Corporate Holiday</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="description" class="form-label small fw-semibold">Description / Remarks</label>
+                            <input type="text" id="description" name="description" class="form-control" placeholder="e.g. Annual celebration of Lights">
+                        </div>
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" id="mandatory" name="mandatory" value="true" checked>
+                            <label class="form-check-label small fw-semibold" for="mandatory">Mandatory Company-wide Off</label>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0 pt-0">
+                        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary fw-semibold px-4">Save Holiday</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/responsive.js}"></script>
+
+    <!-- People+ HR Native Mobile App Bottom Navigation Bar -->
+    <nav class="mobile-app-bottom-nav d-lg-none" aria-label="Mobile Bottom Navigation">
+        <a href="/dashboard#home" class="mobile-nav-item" data-tab="home">
+            <div class="mobile-nav-icon-wrapper">
+                <i class="bi bi-house-door-fill"></i>
+            </div>
+            <span class="mobile-nav-label">Home</span>
+        </a>
+        <a href="/dashboard#action" class="mobile-nav-item" data-tab="action">
+            <div class="mobile-nav-icon-wrapper">
+                <i class="bi bi-lightning-charge-fill"></i>
+                <span class="mobile-nav-badge">!</span>
+            </div>
+            <span class="mobile-nav-label">Action</span>
+        </a>
+        <a href="/holidays" class="mobile-nav-item active" data-tab="explore">
+            <div class="mobile-nav-icon-wrapper">
+                <i class="bi bi-compass-fill"></i>
+            </div>
+            <span class="mobile-nav-label">Explore</span>
+        </a>
+        <a href="/dashboard#engage" class="mobile-nav-item" data-tab="engage">
+            <div class="mobile-nav-icon-wrapper">
+                <i class="bi bi-chat-heart-fill"></i>
+                <span class="mobile-nav-dot"></span>
+            </div>
+            <span class="mobile-nav-label">Engage</span>
+        </a>
+    </nav>
+</body>
+</html>

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PeoplePulse HR &bull; Attendance & HR Operations Hub</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script th:src="@{/js/theme.js}"></script>
+    <style>
+        .greyt-hero-gradient {
+            background: linear-gradient(135deg, #0d1b3e 0%, #153fa0 50%, #1b4fc2 100%);
+            border-radius: 20px;
+            color: #ffffff;
+            position: relative;
+            overflow: hidden;
+        }
+        .greyt-hero-gradient::after {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 320px;
+            height: 320px;
+            background: radial-gradient(circle, rgba(255, 106, 0, 0.25) 0%, rgba(255, 106, 0, 0) 70%);
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body class="bg-light">
+
+    <!-- Top Navigation Bar -->
+    <nav class="navbar navbar-expand-lg bg-white shadow-sm border-bottom py-3 sticky-top">
+        <div class="container">
+            <a class="navbar-brand fw-bold d-flex align-items-center" href="/">
+                <div class="people-plus-logo-icon me-2">
+                    <svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect width="34" height="34" rx="10" fill="url(#ppLogoGrad)"/>
+                        <rect x="0.5" y="0.5" width="33" height="33" rx="9.5" stroke="rgba(255,255,255,0.15)"/>
+                        <circle cx="13.5" cy="11.5" r="4.2" fill="#ffffff"/>
+                        <path d="M6 25.5C6 21.2 9.3 17.5 13.5 17.5C17.7 17.5 21 21.2 21 25.5H6Z" fill="#ffffff" fill-opacity="0.95"/>
+                        <circle cx="24.5" cy="11" r="6" fill="#ff5e3a"/>
+                        <path d="M24.5 7.8V14.2M21.3 11H27.7" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round"/>
+                        <defs>
+                            <linearGradient id="ppLogoGrad" x1="0" y1="0" x2="34" y2="34" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#1b4fc2"/>
+                                <stop offset="1" stop-color="#0a1a44"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+                <span class="people-plus-brand brand-light">
+                    <span class="brand-word-people">People</span><span class="brand-plus-sign">+</span>
+                    <span class="brand-word-hr">HR</span>
+                </span>
+            </a>
+            <div class="d-flex align-items-center gap-3">
+                <span class="text-muted small d-none d-md-inline">
+                    <i class="bi bi-calendar3 me-1"></i><span th:text="${serverTime}">2026-10-25 15:00:00</span>
+                </span>
+                <button type="button" class="btn btn-outline-secondary btn-sm rounded-circle theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle theme" title="Toggle Light/Dark Theme">
+                    <i class="bi bi-moon-stars-fill theme-icon-dark"></i>
+                    <i class="bi bi-sun-fill theme-icon-light d-none"></i>
+                </button>
+                <a href="/book-demo" class="btn btn-outline-primary py-2 px-3 fs-6 fw-semibold">
+                    <i class="bi bi-calendar-check me-1"></i> Book a Demo
+                </a>
+                <a href="/login" class="btn btn-peoplepulse-punch py-2 px-4 fs-6" style="width: auto;">
+                    <i class="bi bi-box-arrow-in-right me-1"></i> Employee Sign In
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container my-3 my-md-5">
+
+        <!-- PeoplePulse HR Hero Banner -->
+        <div class="greyt-hero-gradient p-4 p-md-5 mb-4 mb-md-5 shadow-sm">
+            <div class="row align-items-center position-relative" style="z-index: 2;">
+                <div class="col-lg-8">
+                    <span class="badge bg-white text-primary px-3 py-2 rounded-pill fw-semibold mb-3">
+                        <i class="bi bi-check-circle-fill text-success me-1"></i> PeoplePulse HR Attendance Edition &bull; Port 8085
+                    </span>
+                    <h1 class="display-6 fw-bold mb-3">Modern Workplace Attendance & Employee Self Service</h1>
+                    <p class="fs-6 text-white-50 col-md-10 mb-4">
+                        Web-based employee clock-in with GPS verification, automatic grace period and half-day calculation, shift roster assignments, and payroll timesheets.
+                    </p>
+                    <div class="d-flex gap-2 gap-sm-3 flex-wrap">
+                        <a href="/book-demo" class="btn btn-warning fw-bold px-3 px-sm-4 py-2 rounded-3 shadow-sm text-dark" style="background: #ff6a00; border-color: #ff6a00; color: white !important;">
+                            <i class="bi bi-calendar-check me-1"></i> Book a Demo
+                        </a>
+                        <a href="/login" class="btn btn-outline-light fw-semibold px-3 px-sm-4 py-2 rounded-3">
+                            <i class="bi bi-person-badge me-1"></i> Open Portal
+                        </a>
+                        <a href="/reports/summary" class="btn btn-outline-light fw-semibold px-3 px-sm-4 py-2 rounded-3">
+                            <i class="bi bi-file-earmark-spreadsheet me-1"></i> Timesheets
+                        </a>
+                    </div>
+                </div>
+                <div class="col-lg-4 text-center mt-4 mt-lg-0">
+                    <div class="bg-white p-3 rounded-4 shadow-sm text-dark d-inline-block border mb-3">
+                        <img th:src="@{/images/mobile-qr.png}" alt="Mobile Access QR Code" style="width: 140px; height: 140px; border-radius: 8px;" class="mb-2">
+                        <div class="fw-bold small text-dark"><i class="bi bi-phone me-1 text-primary"></i>Scan for Mobile Access</div>
+                        <div class="text-muted" style="font-size: 0.72rem;">http://192.168.1.14:8085</div>
+                    </div>
+                    <div class="bg-white bg-opacity-10 p-3 rounded-4 backdrop-blur border border-white border-opacity-25">
+                        <div class="text-white-50 text-uppercase fw-bold small mb-1">Company Status</div>
+                        <h3 class="fw-bold text-white mb-0"><span th:text="${totalUsers}">3</span> Active Members</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Metric KPI Cards -->
+        <div class="row g-3 mb-4 mb-md-5">
+            <div class="col-12 col-sm-4">
+                <div class="peoplepulse-stat-card">
+                    <div class="peoplepulse-stat-icon primary">
+                        <i class="bi bi-people-fill"></i>
+                    </div>
+                    <div>
+                        <span class="text-muted small fw-semibold text-uppercase">Active Workforce</span>
+                        <h3 class="fw-bold text-dark mb-0" th:text="${totalUsers}">3</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-sm-4">
+                <div class="peoplepulse-stat-card">
+                    <div class="peoplepulse-stat-icon success">
+                        <i class="bi bi-building"></i>
+                    </div>
+                    <div>
+                        <span class="text-muted small fw-semibold text-uppercase">Departments</span>
+                        <h3 class="fw-bold text-success mb-0" th:text="${totalDepartments}">3</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-sm-4">
+                <div class="peoplepulse-stat-card">
+                    <div class="peoplepulse-stat-icon warning">
+                        <i class="bi bi-clock-history"></i>
+                    </div>
+                    <div>
+                        <span class="text-muted small fw-semibold text-uppercase">Today's Sign-Ins</span>
+                        <h3 class="fw-bold text-warning mb-0" th:text="${todayPunches}">1</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Demo Accounts Callout -->
+        <div class="peoplepulse-card mb-5">
+            <div class="peoplepulse-card-header">
+                <h6><i class="bi bi-shield-lock me-2 text-primary"></i>Demo User Accounts (One-Click Testing)</h6>
+                <a href="/login" class="btn btn-outline-primary btn-sm rounded-pill px-3">Go to Login</a>
+            </div>
+            <div class="table-responsive">
+                <table class="table peoplepulse-table table-mobile-card mb-0 align-middle">
+                    <thead>
+                        <tr>
+                            <th>Portal Role</th>
+                            <th>Username</th>
+                            <th>Password</th>
+                            <th>Direct Landing Page</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td data-label="Portal Role"><span class="badge bg-danger">ADMIN</span></td>
+                            <td data-label="Username"><code>admin</code></td>
+                            <td data-label="Password"><code>admin123</code></td>
+                            <td data-label="Landing Page"><code>/admin/dashboard</code></td>
+                            <td data-label="Action"><a href="/login" class="btn btn-sm btn-outline-danger rounded-pill px-3 py-1">Sign In</a></td>
+                        </tr>
+                        <tr>
+                            <td data-label="Portal Role"><span class="badge bg-warning text-dark">MANAGER</span></td>
+                            <td data-label="Username"><code>manager</code></td>
+                            <td data-label="Password"><code>manager123</code></td>
+                            <td data-label="Landing Page"><code>/manager/dashboard</code></td>
+                            <td data-label="Action"><a href="/login" class="btn btn-sm btn-outline-warning rounded-pill px-3 py-1 text-dark">Sign In</a></td>
+                        </tr>
+                        <tr>
+                            <td data-label="Portal Role"><span class="badge bg-primary">EMPLOYEE</span></td>
+                            <td data-label="Username"><code>employee</code></td>
+                            <td data-label="Password"><code>employee123</code></td>
+                            <td data-label="Landing Page"><code>/dashboard</code></td>
+                            <td data-label="Action"><a href="/login" class="btn btn-sm btn-outline-primary rounded-pill px-3 py-1">Sign In</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="bg-white border-top py-4 text-center text-muted small">
+        &copy; 2026 PeoplePulse HR Attendance Edition &bull; Built with Spring Boot & Bootstrap 5
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

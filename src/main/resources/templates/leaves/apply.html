@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leave Balances & Application &bull; PeoplePulse HR</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script th:src="@{/js/theme.js}"></script>
+    <style>
+        .leave-balance-card {
+            background: var(--peoplepulse-card-bg);
+            border: 1px solid var(--peoplepulse-card-border);
+            border-radius: 12px;
+            padding: 1.25rem;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        .leave-balance-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        .leave-balance-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+        .leave-balance-card.cl::before { background: #3b82f6; }
+        .leave-balance-card.sl::before { background: #10b981; }
+        .leave-balance-card.el::before { background: #8b5cf6; }
+        .leave-balance-card.comp::before { background: #f59e0b; }
+        .leave-balance-card.lop::before { background: #ef4444; }
+    </style>
+</head>
+<body>
+
+    <div class="peoplepulse-wrapper">
+
+        <!-- PeoplePulse HR Sidebar -->
+        <aside class="peoplepulse-sidebar">
+            <div class="peoplepulse-sidebar-brand d-flex align-items-center justify-content-between">
+                <a href="/dashboard" class="d-flex align-items-center text-white text-decoration-none">
+                    <div class="people-plus-logo-icon me-2">
+                        <svg width="32" height="32" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="34" height="34" rx="10" fill="url(#ppLogoGrad)"/>
+                            <rect x="0.5" y="0.5" width="33" height="33" rx="9.5" stroke="rgba(255,255,255,0.15)"/>
+                            <circle cx="13.5" cy="11.5" r="4.2" fill="#ffffff"/>
+                            <path d="M6 25.5C6 21.2 9.3 17.5 13.5 17.5C17.7 17.5 21 21.2 21 25.5H6Z" fill="#ffffff" fill-opacity="0.95"/>
+                            <circle cx="24.5" cy="11" r="6" fill="#ff5e3a"/>
+                            <path d="M24.5 7.8V14.2M21.3 11H27.7" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round"/>
+                            <defs>
+                                <linearGradient id="ppLogoGrad" x1="0" y1="0" x2="34" y2="34" gradientUnits="userSpaceOnUse">
+                                    <stop stop-color="#1b4fc2"/>
+                                    <stop offset="1" stop-color="#0a1a44"/>
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+                    <span class="people-plus-brand">
+                        <span class="brand-word-people">People</span><span class="brand-plus-sign">+</span>
+                        <span class="brand-word-hr">HR</span>
+                    </span>
+                </a>
+                <button type="button" class="btn btn-link text-white-50 p-0 d-lg-none" onclick="toggleSidebar()" aria-label="Close sidebar">
+                    <i class="bi bi-x-lg fs-5"></i>
+                </button>
+            </div>
+
+            <ul class="peoplepulse-nav">
+                <li class="peoplepulse-nav-heading">Workspace</li>
+                <li class="peoplepulse-nav-item">
+                    <a href="/dashboard" class="peoplepulse-nav-link">
+                        <i class="bi bi-grid-1x2"></i> Dashboard
+                    </a>
+                </li>
+                <li class="peoplepulse-nav-item">
+                    <a href="/attendance/history" class="peoplepulse-nav-link">
+                        <i class="bi bi-calendar3"></i> Attendance Log
+                    </a>
+                </li>
+
+                <li class="peoplepulse-nav-heading">Time & Leave</li>
+                <li class="peoplepulse-nav-item">
+                    <a href="/leaves/apply" class="peoplepulse-nav-link active">
+                        <i class="bi bi-calendar-plus"></i> Leave Balances
+                    </a>
+                </li>
+                <li class="peoplepulse-nav-item">
+                    <a href="/holidays" class="peoplepulse-nav-link">
+                        <i class="bi bi-calendar-heart"></i> Holiday Calendar
+                    </a>
+                </li>
+            </ul>
+
+            <div class="peoplepulse-sidebar-footer">
+                <div class="peoplepulse-user-badge">
+                    <div class="peoplepulse-avatar">
+                        <span th:text="${#strings.substring(currentUser.fullName, 0, 1)}">A</span>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <div class="text-white fw-semibold text-truncate small" th:text="${currentUser.fullName}">Alex Smith</div>
+                        <div class="text-white-50" style="font-size: 0.72rem;">EMPLOYEE</div>
+                    </div>
+                    <form th:action="@{/logout}" method="post" class="m-0">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                        <button type="submit" class="btn btn-link text-white-50 p-1 hover-white" title="Logout">
+                            <i class="bi bi-box-arrow-right fs-5"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="peoplepulse-main">
+
+            <header class="peoplepulse-topbar">
+                <div class="d-flex align-items-center">
+                    <button type="button" class="btn btn-outline-secondary btn-sm d-lg-none me-2" onclick="toggleSidebar()" aria-label="Toggle navigation">
+                        <i class="bi bi-list fs-5"></i>
+                    </button>
+                    <div>
+                        <h5 class="fw-bold mb-0 text-dark">Leave Center & Balances</h5>
+                        <span class="text-muted small d-none d-sm-inline">Personal leave quotas, balance ledgers, and absence requests &bull; 2026</span>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <button type="button" class="btn btn-outline-secondary btn-sm rounded-circle theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle theme" title="Toggle Light/Dark Theme">
+                        <i class="bi bi-moon-stars-fill theme-icon-dark"></i>
+                        <i class="bi bi-sun-fill theme-icon-light d-none"></i>
+                    </button>
+                    <a href="/holidays" class="btn btn-outline-primary btn-sm rounded-pill px-3">
+                        <i class="bi bi-calendar-heart me-1"></i> Holidays
+                    </a>
+                    <a href="/dashboard" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
+                        <i class="bi bi-arrow-left me-1"></i> Dashboard
+                    </a>
+                </div>
+            </header>
+
+            <main class="p-3 p-md-4">
+
+                <!-- Flash Alerts -->
+                <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show rounded-3 border-0 shadow-sm mb-4" role="alert">
+                    <i class="bi bi-check-circle-fill me-2 align-middle"></i>
+                    <span th:text="${successMessage}">Submitted successfully!</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show rounded-3 border-0 shadow-sm mb-4" role="alert">
+                    <i class="bi bi-exclamation-circle-fill me-2 align-middle"></i>
+                    <span th:text="${errorMessage}">Error occurred!</span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+
+                <!-- Section: Official 2026 Leave Balances Cards -->
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="fw-bold mb-0 text-dark">
+                        <i class="bi bi-wallet2 me-2 text-primary"></i>My 2026 Leave Balances
+                    </h6>
+                    <span class="text-muted small">Updated automatically on approval</span>
+                </div>
+
+                <div class="row g-3 mb-4">
+                    
+                    <!-- Casual Leave (CL) -->
+                    <div class="col-xl col-md-4 col-sm-6 col-12" th:each="bal : ${leaveBalances}" th:if="${bal.leaveType.name() == 'CASUAL'}">
+                        <div class="leave-balance-card cl h-100">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <span class="badge bg-primary-subtle text-primary fw-semibold px-2 py-1">Casual Leave (CL)</span>
+                                <i class="bi bi-umbrella text-primary fs-5"></i>
+                            </div>
+                            <div class="d-flex align-items-baseline gap-1 mb-2">
+                                <h2 class="fw-bold text-dark mb-0" th:text="${#numbers.formatDecimal(bal.available, 1, 0)}">11</h2>
+                                <span class="text-muted small">/ <span th:text="${#numbers.formatDecimal(bal.totalQuota, 1, 0)}">12</span> days avail</span>
+                            </div>
+                            <div class="progress mb-2" style="height: 6px;">
+                                <div class="progress-bar bg-primary" role="progressbar" th:style="${'width: ' + bal.usagePercent + '%'}" th:aria-valuenow="${bal.usagePercent}" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <div class="d-flex justify-content-between text-muted" style="font-size: 0.72rem;">
+                                <span>Used: <strong class="text-dark" th:text="${#numbers.formatDecimal(bal.used, 1, 0)}">1</strong></span>
+                                <span>Pending: <strong class="text-warning" th:text="${#numbers.formatDecimal(bal.pending, 1, 0)}">0</strong></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sick Leave (SL) -->
+                    <div class="col-xl col-md-4 col-sm-6 col-12" th:each="bal : ${leaveBalances}" th:if="${bal.leaveType.name() == 'SICK'}">
+                        <div class="leave-balance-card sl h-100">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <span class="badge bg-success-subtle text-success fw-semibold px-2 py-1">Sick Leave (SL)</span>
+                                <i class="bi bi-heart-pulse text-success fs-5"></i>
+                            </div>
+                            <div class="d-flex align-items-baseline gap-1 mb-2">
+                                <h2 class="fw-bold text-dark mb-0" th:text="${#numbers.formatDecimal(bal.available, 1, 0)}">10</h2>
+                                <span class="text-muted small">/ <span th:text="${#numbers.formatDecimal(bal.totalQuota, 1, 0)}">10</span> days avail</span>
+                            </div>
+                            <div class="progress mb-2" style="height: 6px;">
+                                <div class="progress-bar bg-success" role="progressbar" th:style="${'width: ' + bal.usagePercent + '%'}" th:aria-valuenow="${bal.usagePercent}" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <div class="d-flex justify-content-between text-muted" style="font-size: 0.72rem;">
+                                <span>Used: <strong class="text-dark" th:text="${#numbers.formatDecimal(bal.used, 1, 0)}">0</strong></span>
+                                <span>Pending: <strong class="text-warning" th:text="${#numbers.formatDecimal(bal.pending, 1, 0)}">0</strong></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Earned Leave (EL) -->
+                    <div class="col-xl col-md-4 col-sm-6 col-12" th:each="bal : ${leaveBalances}" th:if="${bal.leaveType.name() == 'EARNED'}">
+                        <div class="leave-balance-card el h-100">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <span class="badge bg-purple-subtle text-purple fw-semibold px-2 py-1" style="background: rgba(139, 92, 246, 0.15); color: #8b5cf6;">Earned Leave (EL)</span>
+                                <i class="bi bi-briefcase text-purple fs-5" style="color: #8b5cf6;"></i>
+                            </div>
+                            <div class="d-flex align-items-baseline gap-1 mb-2">
+                                <h2 class="fw-bold text-dark mb-0" th:text="${#numbers.formatDecimal(bal.available, 1, 0)}">13</h2>
+                                <span class="text-muted small">/ <span th:text="${#numbers.formatDecimal(bal.totalQuota, 1, 0)}">15</span> days avail</span>
+                            </div>
+                            <div class="progress mb-2" style="height: 6px;">
+                                <div class="progress-bar" style="background-color: #8b5cf6;" role="progressbar" th:style="${'width: ' + bal.usagePercent + '%; background-color: #8b5cf6;'}" th:aria-valuenow="${bal.usagePercent}" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <div class="d-flex justify-content-between text-muted" style="font-size: 0.72rem;">
+                                <span>Used: <strong class="text-dark" th:text="${#numbers.formatDecimal(bal.used, 1, 0)}">2</strong></span>
+                                <span>Pending: <strong class="text-warning" th:text="${#numbers.formatDecimal(bal.pending, 1, 0)}">0</strong></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Compensatory Off (Comp-Off) -->
+                    <div class="col-xl col-md-6 col-sm-6 col-12" th:each="bal : ${leaveBalances}" th:if="${bal.leaveType.name() == 'COMP_OFF'}">
+                        <div class="leave-balance-card comp h-100">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <span class="badge bg-warning-subtle text-warning-emphasis fw-semibold px-2 py-1">Comp-Off</span>
+                                <i class="bi bi-clock-history text-warning fs-5"></i>
+                            </div>
+                            <div class="d-flex align-items-baseline gap-1 mb-2">
+                                <h2 class="fw-bold text-dark mb-0" th:text="${#numbers.formatDecimal(bal.available, 1, 0)}">3</h2>
+                                <span class="text-muted small">/ <span th:text="${#numbers.formatDecimal(bal.totalQuota, 1, 0)}">3</span> days avail</span>
+                            </div>
+                            <div class="progress mb-2" style="height: 6px;">
+                                <div class="progress-bar bg-warning" role="progressbar" th:style="${'width: ' + bal.usagePercent + '%'}" th:aria-valuenow="${bal.usagePercent}" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <div class="d-flex justify-content-between text-muted" style="font-size: 0.72rem;">
+                                <span>Used: <strong class="text-dark" th:text="${#numbers.formatDecimal(bal.used, 1, 0)}">0</strong></span>
+                                <span>Pending: <strong class="text-warning" th:text="${#numbers.formatDecimal(bal.pending, 1, 0)}">0</strong></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Loss of Pay (LOP) -->
+                    <div class="col-xl col-md-6 col-sm-6 col-12" th:each="bal : ${leaveBalances}" th:if="${bal.leaveType.name() == 'LOSS_OF_PAY'}">
+                        <div class="leave-balance-card lop h-100">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <span class="badge bg-danger-subtle text-danger fw-semibold px-2 py-1">Loss of Pay (LOP)</span>
+                                <i class="bi bi-cash-stack text-danger fs-5"></i>
+                            </div>
+                            <div class="d-flex align-items-baseline gap-1 mb-2">
+                                <h2 class="fw-bold text-dark mb-0" th:text="${#numbers.formatDecimal(bal.used, 1, 0)}">0</h2>
+                                <span class="text-muted small">days taken (Unpaid)</span>
+                            </div>
+                            <div class="progress mb-2" style="height: 6px;">
+                                <div class="progress-bar bg-danger" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <div class="d-flex justify-content-between text-muted" style="font-size: 0.72rem;">
+                                <span>Pending: <strong class="text-warning" th:text="${#numbers.formatDecimal(bal.pending, 1, 0)}">0</strong></span>
+                                <span class="text-danger fw-semibold">No Quota Cap</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row g-4">
+                    
+                    <!-- Submit Form -->
+                    <div class="col-lg-5">
+                        <div class="peoplepulse-card">
+                            <div class="peoplepulse-card-header">
+                                <h6><i class="bi bi-calendar-plus me-2 text-primary"></i>Request Leave</h6>
+                            </div>
+                            <div class="peoplepulse-card-body">
+                                <form th:action="@{/leaves/apply}" method="post" id="leaveApplyForm">
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+
+                                    <div class="mb-3">
+                                        <label for="leaveType" class="form-label small fw-semibold">Select Leave Category</label>
+                                        <select id="leaveType" name="leaveType" class="form-select" required>
+                                            <option th:each="b : ${leaveBalances}"
+                                                    th:value="${b.leaveType}"
+                                                    th:text="${b.leaveType.displayName + (b.leaveType.name() != 'LOSS_OF_PAY' ? ' (' + #numbers.formatDecimal(b.available, 1, 0) + ' days remaining)' : ' (Unpaid Leave)')}">
+                                                Casual Leave (CL) - 11 days remaining
+                                            </option>
+                                        </select>
+                                        <div class="form-text small">Quota is deducted only once manager approves the request.</div>
+                                    </div>
+
+                                    <div class="row g-2 mb-3">
+                                        <div class="col-6">
+                                            <label for="startDate" class="form-label small fw-semibold">Start Date</label>
+                                            <input type="date" id="startDate" name="startDate" class="form-control" onchange="calculateDuration()" required>
+                                        </div>
+                                        <div class="col-6">
+                                            <label for="endDate" class="form-label small fw-semibold">End Date</label>
+                                            <input type="date" id="endDate" name="endDate" class="form-control" onchange="calculateDuration()" required>
+                                        </div>
+                                    </div>
+
+                                    <!-- Duration Banner -->
+                                    <div class="alert alert-light border py-2 px-3 small d-flex align-items-center justify-content-between mb-3">
+                                        <span><i class="bi bi-clock-history me-1 text-primary"></i> Requested Duration:</span>
+                                        <strong id="durationDisplay" class="text-primary fs-6">1 day</strong>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <label for="reason" class="form-label small fw-semibold">Reason for Absence</label>
+                                        <textarea id="reason" name="reason" rows="3" class="form-control" placeholder="Briefly describe the purpose of your leave..." required></textarea>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-peoplepulse-punch py-2 fw-semibold">
+                                        <i class="bi bi-send-fill me-1"></i> Submit Leave Request
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submitted Requests List -->
+                    <div class="col-lg-7">
+                        <div class="peoplepulse-card">
+                            <div class="peoplepulse-card-header">
+                                <h6><i class="bi bi-clock-history me-2 text-primary"></i>My Submitted Requests</h6>
+                                <span class="badge bg-light text-muted border" th:text="${myLeaves.size() + ' requests on record'}">0 requests</span>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table peoplepulse-table table-mobile-card align-middle">
+                                    <thead>
+                                        <tr>
+                                            <th>Type</th>
+                                            <th>Dates & Duration</th>
+                                            <th>Status</th>
+                                            <th>Reason</th>
+                                            <th>Manager Note</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="lr : ${myLeaves}">
+                                            <td data-label="Type">
+                                                <span th:if="${lr.leaveType.name() == 'CASUAL'}" class="badge bg-primary-subtle text-primary border border-primary-subtle">
+                                                    <i class="bi bi-umbrella me-1"></i> Casual Leave
+                                                </span>
+                                                <span th:if="${lr.leaveType.name() == 'SICK'}" class="badge bg-success-subtle text-success border border-success-subtle">
+                                                    <i class="bi bi-heart-pulse me-1"></i> Sick Leave
+                                                </span>
+                                                <span th:if="${lr.leaveType.name() == 'EARNED' or lr.leaveType.name() == 'ANNUAL'}" class="badge bg-purple-subtle text-purple border border-purple-subtle" style="background: rgba(139, 92, 246, 0.15); color: #8b5cf6;">
+                                                    <i class="bi bi-briefcase me-1"></i> Earned Leave
+                                                </span>
+                                                <span th:if="${lr.leaveType.name() == 'COMP_OFF'}" class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle">
+                                                    <i class="bi bi-clock-history me-1"></i> Comp-Off
+                                                </span>
+                                                <span th:if="${lr.leaveType.name() == 'LOSS_OF_PAY' or lr.leaveType.name() == 'UNPAID'}" class="badge bg-danger-subtle text-danger border border-danger-subtle">
+                                                    <i class="bi bi-cash-stack me-1"></i> Loss of Pay
+                                                </span>
+                                            </td>
+                                            <td data-label="Dates & Duration" class="small">
+                                                <div class="fw-semibold text-dark">
+                                                    <span th:text="${lr.startDate}">2026-10-26</span> to <span th:text="${lr.endDate}">2026-10-27</span>
+                                                </div>
+                                                <span class="text-muted" style="font-size: 0.72rem;">
+                                                    <i class="bi bi-calendar-event me-1"></i><span th:text="${lr.durationInDays + ' day(s)'}">2 day(s)</span>
+                                                </span>
+                                            </td>
+                                            <td data-label="Status">
+                                                <span th:if="${lr.status.name() == 'PENDING'}" class="badge badge-peoplepulse badge-late">Pending</span>
+                                                <span th:if="${lr.status.name() == 'APPROVED'}" class="badge badge-peoplepulse badge-present">Approved</span>
+                                                <span th:if="${lr.status.name() == 'REJECTED'}" class="badge badge-peoplepulse badge-absent">Rejected</span>
+                                            </td>
+                                            <td data-label="Reason" class="small text-muted" th:text="${lr.reason}">Personal errand</td>
+                                            <td data-label="Manager Note" class="small text-secondary" th:text="${lr.adminComments != null ? lr.adminComments : '-'}">-</td>
+                                        </tr>
+                                        <tr th:if="${#lists.isEmpty(myLeaves)}">
+                                            <td colspan="5" class="text-center text-muted py-5">
+                                                <i class="bi bi-calendar2-check fs-2 d-block mb-2 text-muted"></i>
+                                                No leave requests submitted yet.
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/responsive.js}"></script>
+    <script>
+        function initDates() {
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const yyyy = tomorrow.toISOString().split('T')[0];
+            const startInput = document.getElementById('startDate');
+            const endInput = document.getElementById('endDate');
+            if (!startInput.value) startInput.value = yyyy;
+            if (!endInput.value) endInput.value = yyyy;
+            calculateDuration();
+        }
+
+        function calculateDuration() {
+            const startVal = document.getElementById('startDate').value;
+            const endVal = document.getElementById('endDate').value;
+            const durationDisplay = document.getElementById('durationDisplay');
+            if (!startVal || !endVal) return;
+
+            const start = new Date(startVal);
+            const end = new Date(endVal);
+            const diffTime = end - start;
+            if (diffTime < 0) {
+                durationDisplay.textContent = 'Invalid date range';
+                durationDisplay.classList.add('text-danger');
+                durationDisplay.classList.remove('text-primary');
+            } else {
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                durationDisplay.textContent = diffDays + (diffDays === 1 ? ' day' : ' days');
+                durationDisplay.classList.remove('text-danger');
+                durationDisplay.classList.add('text-primary');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', initDates);
+    </script>
+
+    <!-- People+ HR Native Mobile App Bottom Navigation Bar -->
+    <nav class="mobile-app-bottom-nav d-lg-none" aria-label="Mobile Bottom Navigation">
+        <a href="/dashboard#home" class="mobile-nav-item" data-tab="home">
+            <div class="mobile-nav-icon-wrapper">
+                <i class="bi bi-house-door-fill"></i>
+            </div>
+            <span class="mobile-nav-label">Home</span>
+        </a>
+        <a href="/dashboard#action" class="mobile-nav-item" data-tab="action">
+            <div class="mobile-nav-icon-wrapper">
+                <i class="bi bi-lightning-charge-fill"></i>
+                <span class="mobile-nav-badge">!</span>
+            </div>
+            <span class="mobile-nav-label">Action</span>
+        </a>
+        <a href="/leaves/apply" class="mobile-nav-item active" data-tab="explore">
+            <div class="mobile-nav-icon-wrapper">
+                <i class="bi bi-compass-fill"></i>
+            </div>
+            <span class="mobile-nav-label">Explore</span>
+        </a>
+        <a href="/dashboard#engage" class="mobile-nav-item" data-tab="engage">
+            <div class="mobile-nav-icon-wrapper">
+                <i class="bi bi-chat-heart-fill"></i>
+                <span class="mobile-nav-dot"></span>
+            </div>
+            <span class="mobile-nav-label">Engage</span>
+        </a>
+    </nav>
+</body>
+</html>

@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo Requests &bull; PeoplePulse HR Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script th:src="@{/js/theme.js}"></script>
+</head>
+<body>
+
+    <div class="peoplepulse-wrapper">
+
+        <!-- PeoplePulse HR Admin Sidebar -->
+        <aside class="peoplepulse-sidebar">
+            <div class="peoplepulse-sidebar-brand d-flex align-items-center justify-content-between">
+                <a href="/admin/dashboard" class="d-flex align-items-center text-white text-decoration-none">
+                    <div class="people-plus-logo-icon me-2">
+                        <svg width="32" height="32" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="34" height="34" rx="10" fill="url(#ppLogoGrad)"/>
+                            <rect x="0.5" y="0.5" width="33" height="33" rx="9.5" stroke="rgba(255,255,255,0.15)"/>
+                            <circle cx="13.5" cy="11.5" r="4.2" fill="#ffffff"/>
+                            <path d="M6 25.5C6 21.2 9.3 17.5 13.5 17.5C17.7 17.5 21 21.2 21 25.5H6Z" fill="#ffffff" fill-opacity="0.95"/>
+                            <circle cx="24.5" cy="11" r="6" fill="#ff5e3a"/>
+                            <path d="M24.5 7.8V14.2M21.3 11H27.7" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round"/>
+                            <defs>
+                                <linearGradient id="ppLogoGrad" x1="0" y1="0" x2="34" y2="34" gradientUnits="userSpaceOnUse">
+                                    <stop stop-color="#1b4fc2"/>
+                                    <stop offset="1" stop-color="#0a1a44"/>
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+                    <span class="people-plus-brand">
+                        <span class="brand-word-people">People</span><span class="brand-plus-sign">+</span>
+                        <span class="brand-word-hr">HR</span>
+                    </span>
+                </a>
+                <button type="button" class="btn btn-link text-white-50 p-0 d-lg-none" onclick="toggleSidebar()" aria-label="Close sidebar">
+                    <i class="bi bi-x-lg fs-5"></i>
+                </button>
+            </div>
+
+            <ul class="peoplepulse-nav">
+                <li class="peoplepulse-nav-heading">Administration</li>
+                <li class="peoplepulse-nav-item">
+                    <a href="/admin/dashboard" class="peoplepulse-nav-link">
+                        <i class="bi bi-speedometer2"></i> Overview
+                    </a>
+                </li>
+                <li class="peoplepulse-nav-item">
+                    <a href="/admin/employees" class="peoplepulse-nav-link">
+                        <i class="bi bi-people"></i> Employees & Excel
+                    </a>
+                </li>
+                <li class="peoplepulse-nav-item">
+                    <a href="/admin/demo-bookings" class="peoplepulse-nav-link active">
+                        <i class="bi bi-calendar-event"></i> Demo Requests
+                    </a>
+                </li>
+                <li class="peoplepulse-nav-item">
+                    <a href="/admin/shifts" class="peoplepulse-nav-link">
+                        <i class="bi bi-calendar-range"></i> Shift Roster
+                    </a>
+                </li>
+                <li class="peoplepulse-nav-item">
+                    <a href="/manager/leaves" class="peoplepulse-nav-link">
+                        <i class="bi bi-calendar-check"></i> Leave Review
+                    </a>
+                </li>
+                <li class="peoplepulse-nav-item">
+                    <a href="/holidays" class="peoplepulse-nav-link">
+                        <i class="bi bi-calendar-heart"></i> Holiday Calendar
+                    </a>
+                </li>
+                <li class="peoplepulse-nav-item">
+                    <a href="/attendance/history" class="peoplepulse-nav-link">
+                        <i class="bi bi-calendar3"></i> Day Muster
+                    </a>
+                </li>
+                <li class="peoplepulse-nav-item">
+                    <a href="/reports/summary" class="peoplepulse-nav-link">
+                        <i class="bi bi-file-earmark-spreadsheet"></i> Reports
+                    </a>
+                </li>
+                <li class="peoplepulse-nav-item">
+                    <a href="/admin/debug/logs" class="peoplepulse-nav-link">
+                        <i class="bi bi-terminal"></i> Audit Logs
+                    </a>
+                </li>
+            </ul>
+
+            <div class="peoplepulse-sidebar-footer">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <div class="user-avatar-sm">
+                        <i class="bi bi-shield-lock-fill text-warning"></i>
+                    </div>
+                    <div>
+                        <div class="small fw-semibold text-white">Administrator</div>
+                        <div class="text-white-50" style="font-size: 0.72rem;">Pune Headquarters</div>
+                    </div>
+                </div>
+                <form th:action="@{/logout}" method="post">
+                    <button type="submit" class="btn btn-outline-light btn-sm w-100">
+                        <i class="bi bi-box-arrow-right me-1"></i> Sign Out
+                    </button>
+                </form>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="peoplepulse-main">
+            
+            <!-- Topbar -->
+            <header class="peoplepulse-topbar">
+                <div class="d-flex align-items-center gap-3">
+                    <button type="button" class="btn btn-link text-dark p-0 d-lg-none" onclick="toggleSidebar()" aria-label="Open sidebar">
+                        <i class="bi bi-list fs-3"></i>
+                    </button>
+                    <div>
+                        <h5 class="fw-bold mb-0 text-dark">Demo Walkthrough Leads</h5>
+                        <small class="text-muted">Review, confirm, and manage prospective client demo sessions</small>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                    <button type="button" class="btn btn-outline-secondary btn-sm rounded-circle theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle theme">
+                        <i class="bi bi-moon-stars-fill theme-icon-dark"></i>
+                        <i class="bi bi-sun-fill theme-icon-light d-none"></i>
+                    </button>
+                    <a href="/book-demo" target="_blank" class="btn btn-sm btn-outline-primary fw-semibold">
+                        <i class="bi bi-box-arrow-up-right me-1"></i> Public Demo Page
+                    </a>
+                </div>
+            </header>
+
+            <!-- Scrollable Main Pane -->
+            <main class="peoplepulse-content p-3 p-md-4">
+
+                <!-- Alert Messages -->
+                <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="bi bi-check-circle-fill me-2"></i><span th:text="${successMessage}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+                <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-circle-fill me-2"></i><span th:text="${errorMessage}"></span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+
+                <!-- KPI Cards -->
+                <div class="row g-3 mb-4">
+                    <div class="col-6 col-md-3">
+                        <div class="peoplepulse-stat-card">
+                            <div class="peoplepulse-stat-icon primary">
+                                <i class="bi bi-calendar-event"></i>
+                            </div>
+                            <div>
+                                <div class="peoplepulse-stat-label">Total Requests</div>
+                                <div class="peoplepulse-stat-value" th:text="${metrics.total}">0</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="peoplepulse-stat-card">
+                            <div class="peoplepulse-stat-icon warning">
+                                <i class="bi bi-hourglass-split"></i>
+                            </div>
+                            <div>
+                                <div class="peoplepulse-stat-label">Pending Action</div>
+                                <div class="peoplepulse-stat-value" th:text="${metrics.pending}">0</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="peoplepulse-stat-card">
+                            <div class="peoplepulse-stat-icon success">
+                                <i class="bi bi-check2-circle"></i>
+                            </div>
+                            <div>
+                                <div class="peoplepulse-stat-label">Confirmed</div>
+                                <div class="peoplepulse-stat-value" th:text="${metrics.confirmed}">0</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="peoplepulse-stat-card">
+                            <div class="peoplepulse-stat-icon info">
+                                <i class="bi bi-trophy"></i>
+                            </div>
+                            <div>
+                                <div class="peoplepulse-stat-label">Completed</div>
+                                <div class="peoplepulse-stat-value" th:text="${metrics.completed}">0</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filter Tabs -->
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                    <div class="btn-group" role="group">
+                        <a th:href="@{/admin/demo-bookings}" class="btn btn-sm" th:classappend="${currentStatus == 'ALL' ? 'btn-primary' : 'btn-outline-secondary'}">
+                            All (<span th:text="${metrics.total}">0</span>)
+                        </a>
+                        <a th:href="@{/admin/demo-bookings(status='PENDING')}" class="btn btn-sm" th:classappend="${currentStatus == 'PENDING' ? 'btn-warning text-dark' : 'btn-outline-secondary'}">
+                            Pending (<span th:text="${metrics.pending}">0</span>)
+                        </a>
+                        <a th:href="@{/admin/demo-bookings(status='CONFIRMED')}" class="btn btn-sm" th:classappend="${currentStatus == 'CONFIRMED' ? 'btn-success' : 'btn-outline-secondary'}">
+                            Confirmed (<span th:text="${metrics.confirmed}">0</span>)
+                        </a>
+                        <a th:href="@{/admin/demo-bookings(status='COMPLETED')}" class="btn btn-sm" th:classappend="${currentStatus == 'COMPLETED' ? 'btn-info' : 'btn-outline-secondary'}">
+                            Completed (<span th:text="${metrics.completed}">0</span>)
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Bookings Ledger Table -->
+                <div class="peoplepulse-card">
+                    <div class="peoplepulse-card-header d-flex justify-content-between align-items-center">
+                        <h6 class="fw-bold mb-0 text-dark"><i class="bi bi-table me-2 text-primary"></i>Demo Booking Inquiries</h6>
+                        <span class="text-muted small" th:text="${#lists.size(bookings) + ' records found'}">0 records</span>
+                    </div>
+                    <div class="p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0 table-mobile-card">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Ref ID / Date</th>
+                                        <th>Prospect Contact</th>
+                                        <th>Company &amp; Scale</th>
+                                        <th>Target Slot</th>
+                                        <th>Interested Topics</th>
+                                        <th>Status</th>
+                                        <th class="text-end">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:if="${#lists.isEmpty(bookings)}">
+                                        <td colspan="7" class="text-center py-5 text-muted">
+                                            <i class="bi bi-inbox fs-1 d-block mb-2 text-muted"></i>
+                                            No demo booking requests found for this filter.
+                                        </td>
+                                    </tr>
+                                    <tr th:each="b : ${bookings}">
+                                        <td data-label="Ref ID / Date">
+                                            <strong class="font-monospace text-primary" th:text="${b.bookingReference}">DEMO-2610-1234</strong>
+                                            <div class="text-muted small" th:text="${#temporals.format(b.createdAt, 'yyyy-MM-dd HH:mm')}">2026-10-31 14:00</div>
+                                        </td>
+                                        <td data-label="Prospect Contact">
+                                            <div class="fw-bold text-dark" th:text="${b.fullName}">John Doe</div>
+                                            <div class="small text-muted" th:text="${b.jobTitle}">HR Lead</div>
+                                            <div class="small">
+                                                <a th:href="${'mailto:' + b.workEmail}" class="text-decoration-none" th:text="${b.workEmail}">email@domain.com</a>
+                                            </div>
+                                            <div class="small text-muted" th:text="${b.phone}">+91 9999999999</div>
+                                        </td>
+                                        <td data-label="Company & Scale">
+                                            <strong class="text-dark" th:text="${b.companyName}">Acme Inc</strong>
+                                            <div class="small text-muted">
+                                                <span th:if="${b.country}" class="badge bg-secondary-subtle text-dark border me-1" th:text="${b.country}">India</span>
+                                                <span th:text="${b.companySize + ' employees'}">51 - 200 employees</span>
+                                            </div>
+                                        </td>
+                                        <td data-label="Target Slot">
+                                            <div class="fw-semibold text-dark" th:text="${b.preferredDate}">2026-11-04</div>
+                                            <div class="small text-muted" th:text="${b.preferredTimeSlot}">Morning (10:00 - 11:00 AM)</div>
+                                        </td>
+                                        <td data-label="Interested Topics">
+                                            <div th:if="${b.interestedModules}">
+                                                <span class="badge bg-light text-dark border me-1 mb-1 small" th:each="topic : ${#strings.arraySplit(b.interestedModules, ',')}" th:text="${#strings.trim(topic)}">Attendance</span>
+                                            </div>
+                                            <div th:if="${b.notes}" class="small text-muted fst-italic mt-1" th:text="${'Note: ' + b.notes}">Note</div>
+                                        </td>
+                                        <td data-label="Status">
+                                            <span th:if="${b.status.name() == 'PENDING'}" class="badge bg-warning text-dark px-2 py-1">PENDING</span>
+                                            <span th:if="${b.status.name() == 'CONFIRMED'}" class="badge bg-success px-2 py-1">CONFIRMED</span>
+                                            <span th:if="${b.status.name() == 'COMPLETED'}" class="badge bg-info px-2 py-1">COMPLETED</span>
+                                            <span th:if="${b.status.name() == 'CANCELLED'}" class="badge bg-secondary px-2 py-1">CANCELLED</span>
+                                        </td>
+                                        <td data-label="Actions" class="text-end">
+                                            <div class="btn-group btn-group-sm">
+                                                <form th:if="${b.status.name() == 'PENDING'}" th:action="@{'/admin/demo-bookings/' + ${b.id} + '/status'}" method="post" class="d-inline">
+                                                    <input type="hidden" name="status" value="CONFIRMED">
+                                                    <button type="submit" class="btn btn-outline-success btn-sm" title="Confirm Demo">
+                                                        <i class="bi bi-check-lg"></i> Confirm
+                                                    </button>
+                                                </form>
+                                                <form th:if="${b.status.name() == 'CONFIRMED'}" th:action="@{'/admin/demo-bookings/' + ${b.id} + '/status'}" method="post" class="d-inline">
+                                                    <input type="hidden" name="status" value="COMPLETED">
+                                                    <button type="submit" class="btn btn-outline-info btn-sm" title="Mark Done">
+                                                        <i class="bi bi-check2-all"></i> Completed
+                                                    </button>
+                                                </form>
+                                                <form th:if="${b.status.name() != 'CANCELLED' and b.status.name() != 'COMPLETED'}" th:action="@{'/admin/demo-bookings/' + ${b.id} + '/status'}" method="post" class="d-inline ms-1">
+                                                    <input type="hidden" name="status" value="CANCELLED">
+                                                    <button type="submit" class="btn btn-outline-danger btn-sm" title="Cancel Demo" onclick="return confirm('Cancel this demo booking?');">
+                                                        <i class="bi bi-x-lg"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function toggleSidebar() {
+            document.querySelector('.peoplepulse-sidebar').classList.toggle('show');
+        }
+    </script>
+</body>
+</html>

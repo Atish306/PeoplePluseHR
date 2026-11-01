@@ -1,0 +1,1301 @@
+/* ===================================================================
+   PeoplePulse HR-Inspired Design System (Open & Unpatented Resources)
+   Clean, modern enterprise HRMS layout with Inter typography
+   Fully Responsive for Mobile, Tablet, Laptop, and Desktop
+   =================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --peoplepulse-primary: #1b4fc2;
+    --peoplepulse-primary-hover: #153fa0;
+    --peoplepulse-primary-light: #eef3ff;
+    --peoplepulse-orange: #ff6a00;
+    --peoplepulse-orange-hover: #e55f19;
+    --peoplepulse-orange-light: #fff5ee;
+    --peoplepulse-sidebar-bg: #111c38;
+    --peoplepulse-sidebar-text: #94a3b8;
+    --peoplepulse-sidebar-active: #1b4fc2;
+    --peoplepulse-body-bg: #f4f6fa;
+    --peoplepulse-card-bg: #ffffff;
+    --peoplepulse-card-border: #e6ebf1;
+    --peoplepulse-text-dark: #1e293b;
+    --peoplepulse-text-muted: #64748b;
+    --peoplepulse-success: #10b981;
+    --peoplepulse-warning: #f59e0b;
+    --peoplepulse-danger: #ef4444;
+    --peoplepulse-topbar-bg: #ffffff;
+    --peoplepulse-table-head-bg: #f8fafc;
+    --peoplepulse-table-border: #f1f5f9;
+    --peoplepulse-table-hover: #f8fafc;
+    --peoplepulse-input-bg: #ffffff;
+    --peoplepulse-input-border: #cbd5e1;
+    --peoplepulse-widget-bg: #ffffff;
+    --peoplepulse-card-header-bg: #ffffff;
+}
+
+[data-bs-theme="dark"] {
+    --peoplepulse-primary: #3b82f6;
+    --peoplepulse-primary-hover: #60a5fa;
+    --peoplepulse-primary-light: rgba(59, 130, 246, 0.15);
+    --peoplepulse-orange: #f97316;
+    --peoplepulse-orange-hover: #fb923c;
+    --peoplepulse-orange-light: rgba(249, 115, 22, 0.15);
+    --peoplepulse-sidebar-bg: #090e1a;
+    --peoplepulse-sidebar-text: #94a3b8;
+    --peoplepulse-sidebar-active: #2563eb;
+    --peoplepulse-body-bg: #0f172a;
+    --peoplepulse-card-bg: #1e293b;
+    --peoplepulse-card-border: #334155;
+    --peoplepulse-text-dark: #f8fafc;
+    --peoplepulse-text-muted: #94a3b8;
+    --peoplepulse-success: #34d399;
+    --peoplepulse-warning: #fbbf24;
+    --peoplepulse-danger: #f87171;
+    --peoplepulse-topbar-bg: #1e293b;
+    --peoplepulse-table-head-bg: #0f172a;
+    --peoplepulse-table-border: #334155;
+    --peoplepulse-table-hover: #273549;
+    --peoplepulse-input-bg: #0f172a;
+    --peoplepulse-input-border: #475569;
+    --peoplepulse-widget-bg: #1e293b;
+    --peoplepulse-card-header-bg: #1e293b;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: var(--peoplepulse-body-bg);
+    color: var(--peoplepulse-text-dark);
+    margin: 0;
+    padding: 0;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    overflow-x: hidden;
+}
+
+/* App Wrapper for Dashboard Layout (Viewport-Locked Layout) */
+.peoplepulse-wrapper {
+    display: flex;
+    height: 100vh;
+    height: 100dvh;
+    width: 100%;
+    max-width: 100vw;
+    overflow: hidden;
+}
+
+/* PeoplePulse HR Sidebar Navigation */
+.peoplepulse-sidebar {
+    width: 250px;
+    background-color: var(--peoplepulse-sidebar-bg);
+    color: #cbd5e1;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    height: 100dvh;
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+    z-index: 1050;
+    overflow: hidden;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.peoplepulse-sidebar-brand {
+    padding: 1.15rem 1.25rem;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    text-decoration: none;
+}
+
+.peoplepulse-sidebar-brand .brand-logo-badge {
+    background: linear-gradient(135deg, #1b4fc2 0%, #ff6a00 100%);
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-size: 1rem;
+    margin-right: 0.75rem;
+    box-shadow: 0 2px 6px rgba(255, 106, 0, 0.3);
+}
+
+/* People+ HR Signature Logo & Branding */
+.people-plus-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.65rem;
+    text-decoration: none !important;
+}
+
+.people-plus-logo-icon {
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.people-plus-logo:hover .people-plus-logo-icon,
+.peoplepulse-sidebar-brand:hover .people-plus-logo-icon {
+    transform: scale(1.06);
+}
+
+.people-plus-brand {
+    display: inline-flex;
+    align-items: center;
+    letter-spacing: -0.4px;
+    line-height: 1;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.people-plus-brand .brand-word-people {
+    font-weight: 800;
+    font-size: 1.2rem;
+    color: #ffffff;
+    letter-spacing: -0.5px;
+}
+
+.people-plus-brand .brand-plus-sign {
+    color: #ff5e3a;
+    font-weight: 900;
+    font-size: 1.35rem;
+    line-height: 0.8;
+    margin-left: 2px;
+    margin-right: 5px;
+    display: inline-block;
+    text-shadow: 0 0 10px rgba(255, 94, 58, 0.45);
+    animation: plusPulse 3s ease-in-out infinite;
+}
+
+@keyframes plusPulse {
+    0%, 100% { transform: scale(1); filter: brightness(1); }
+    50% { transform: scale(1.12); filter: brightness(1.25); }
+}
+
+.people-plus-brand .brand-word-hr {
+    font-weight: 800;
+    font-size: 0.75rem;
+    background: rgba(255, 255, 255, 0.12);
+    color: #93c5fd;
+    border: 1px solid rgba(147, 197, 253, 0.35);
+    padding: 0.12rem 0.42rem;
+    border-radius: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    display: inline-block;
+}
+
+/* Light background variant for index, book-demo, login */
+.people-plus-brand.brand-light .brand-word-people {
+    color: #0f172a;
+}
+
+.people-plus-brand.brand-light .brand-word-hr {
+    background: rgba(27, 79, 194, 0.08);
+    color: #1b4fc2;
+    border-color: rgba(27, 79, 194, 0.22);
+}
+
+[data-bs-theme="dark"] .people-plus-brand.brand-light .brand-word-people {
+    color: #f8fafc;
+}
+
+[data-bs-theme="dark"] .people-plus-brand.brand-light .brand-word-hr {
+    background: rgba(59, 130, 246, 0.15);
+    color: #93c5fd;
+    border-color: rgba(59, 130, 246, 0.3);
+}
+
+.peoplepulse-nav {
+    list-style: none;
+    padding: 1rem 0.75rem;
+    margin: 0;
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+/* Custom Modern PeoplePulse Sidebar Scrollbar */
+.peoplepulse-nav::-webkit-scrollbar,
+.peoplepulse-sidebar::-webkit-scrollbar {
+    width: 5px;
+}
+
+.peoplepulse-nav::-webkit-scrollbar-track,
+.peoplepulse-sidebar::-webkit-scrollbar-track {
+    background: transparent;
+    margin: 6px 0;
+}
+
+.peoplepulse-nav::-webkit-scrollbar-thumb,
+.peoplepulse-sidebar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.18);
+    border-radius: 10px;
+    transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.peoplepulse-nav:hover::-webkit-scrollbar-thumb,
+.peoplepulse-sidebar:hover::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.32);
+}
+
+.peoplepulse-nav::-webkit-scrollbar-thumb:hover,
+.peoplepulse-sidebar::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, var(--peoplepulse-primary, #1b4fc2) 0%, #3b82f6 100%);
+    box-shadow: 0 0 8px rgba(59, 130, 246, 0.6);
+}
+
+/* Dark mode sidebar scrollbar adjustment */
+[data-bs-theme="dark"] .peoplepulse-nav {
+    scrollbar-color: rgba(255, 255, 255, 0.14) transparent;
+}
+
+[data-bs-theme="dark"] .peoplepulse-nav::-webkit-scrollbar-thumb,
+[data-bs-theme="dark"] .peoplepulse-sidebar::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+[data-bs-theme="dark"] .peoplepulse-nav:hover::-webkit-scrollbar-thumb,
+[data-bs-theme="dark"] .peoplepulse-sidebar:hover::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.24);
+}
+
+[data-bs-theme="dark"] .peoplepulse-nav::-webkit-scrollbar-thumb:hover,
+[data-bs-theme="dark"] .peoplepulse-sidebar::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #2563eb 0%, #60a5fa 100%);
+    box-shadow: 0 0 8px rgba(96, 165, 250, 0.6);
+}
+
+.peoplepulse-nav-item {
+    margin-bottom: 0.25rem;
+}
+
+.peoplepulse-nav-link {
+    display: flex;
+    align-items: center;
+    padding: 0.65rem 0.9rem;
+    border-radius: 8px;
+    color: var(--peoplepulse-sidebar-text);
+    text-decoration: none;
+    font-size: 0.88rem;
+    font-weight: 500;
+    transition: all 0.15s ease-in-out;
+}
+
+.peoplepulse-nav-link i {
+    font-size: 1.1rem;
+    margin-right: 0.75rem;
+    width: 20px;
+    text-align: center;
+}
+
+.peoplepulse-nav-link:hover {
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.06);
+}
+
+.peoplepulse-nav-link.active {
+    color: #ffffff;
+    background-color: var(--peoplepulse-sidebar-active);
+    box-shadow: 0 2px 8px rgba(27, 79, 194, 0.35);
+}
+
+.peoplepulse-nav-heading {
+    padding: 0.75rem 0.9rem 0.35rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: #64748b;
+}
+
+/* User Card in Sidebar Footer */
+.peoplepulse-sidebar-footer {
+    padding: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    background-color: rgba(0, 0, 0, 0.15);
+}
+
+.peoplepulse-user-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.peoplepulse-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #1b4fc2, #06b6d4);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+}
+
+/* Main Content Area */
+.peoplepulse-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0;
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+}
+
+/* Top Header Bar (Fixed at top of layout) */
+.peoplepulse-topbar {
+    background: var(--peoplepulse-topbar-bg);
+    min-height: 64px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 2rem;
+    border-bottom: 1px solid var(--peoplepulse-card-border);
+    z-index: 90;
+    gap: 1rem;
+}
+
+/* ONLY HTML CONTENT SCROLLS (Isolated content scroll pane) */
+.peoplepulse-main > main {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    box-sizing: border-box;
+}
+
+/* Custom Sleek Scrollbar for the HTML Content Pane */
+.peoplepulse-main > main::-webkit-scrollbar {
+    width: 6px;
+}
+
+.peoplepulse-main > main::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.peoplepulse-main > main::-webkit-scrollbar-thumb {
+    background-color: rgba(148, 163, 184, 0.4);
+    border-radius: 6px;
+}
+
+.peoplepulse-main > main::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(100, 116, 139, 0.7);
+}
+
+[data-bs-theme="dark"] .peoplepulse-main > main::-webkit-scrollbar-thumb {
+    background-color: rgba(148, 163, 184, 0.25);
+}
+
+[data-bs-theme="dark"] .peoplepulse-main > main::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(148, 163, 184, 0.5);
+}
+
+/* Cards & Widgets */
+.peoplepulse-card {
+    background: var(--peoplepulse-card-bg);
+    border: 1px solid var(--peoplepulse-card-border);
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.peoplepulse-card-header {
+    padding: 1.1rem 1.4rem;
+    border-bottom: 1px solid var(--peoplepulse-card-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.peoplepulse-card-header h5,
+.peoplepulse-card-header h6 {
+    margin: 0;
+    font-weight: 600;
+    color: var(--peoplepulse-text-dark);
+}
+
+.peoplepulse-card-body {
+    padding: 1.4rem;
+}
+
+/* PeoplePulse HR Iconic Sign-In / Sign-Out Widget */
+.peoplepulse-sign-in-widget {
+    background: #ffffff;
+    border: 1px solid var(--peoplepulse-card-border);
+    border-radius: 14px;
+    padding: 1.75rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.peoplepulse-sign-in-widget::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--peoplepulse-primary), var(--peoplepulse-orange));
+}
+
+.peoplepulse-clock-circle {
+    display: inline-block;
+    padding: 0.5rem 1.25rem;
+    background: var(--peoplepulse-primary-light);
+    border-radius: 30px;
+    color: var(--peoplepulse-primary);
+    font-weight: 700;
+    font-size: 1.35rem;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.75rem;
+}
+
+.btn-peoplepulse-punch {
+    background: linear-gradient(135deg, var(--peoplepulse-orange) 0%, #ea580c 100%);
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 0.85rem 1.5rem;
+    border-radius: 10px;
+    border: none;
+    box-shadow: 0 4px 12px rgba(255, 106, 0, 0.35);
+    transition: all 0.2s ease;
+    width: 100%;
+}
+
+.btn-peoplepulse-punch:hover {
+    background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
+    color: #ffffff;
+    box-shadow: 0 6px 16px rgba(255, 106, 0, 0.45);
+    transform: translateY(-1px);
+}
+
+.btn-peoplepulse-punch-out {
+    background: #ffffff;
+    color: var(--peoplepulse-danger);
+    border: 2px solid var(--peoplepulse-danger);
+    font-weight: 600;
+    font-size: 1rem;
+    padding: 0.8rem 1.5rem;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+    width: 100%;
+}
+
+.btn-peoplepulse-punch-out:hover {
+    background: var(--peoplepulse-danger);
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+/* Quick Access Action Pill Buttons */
+.peoplepulse-quick-pill {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.85rem 1rem;
+    background: #ffffff;
+    border: 1px solid var(--peoplepulse-card-border);
+    border-radius: 10px;
+    color: var(--peoplepulse-text-dark);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.88rem;
+    transition: all 0.15s ease;
+}
+
+.peoplepulse-quick-pill:hover {
+    border-color: var(--peoplepulse-primary);
+    background: var(--peoplepulse-primary-light);
+    color: var(--peoplepulse-primary);
+    transform: translateY(-1px);
+}
+
+.peoplepulse-quick-pill i {
+    font-size: 1.25rem;
+    color: var(--peoplepulse-primary);
+    flex-shrink: 0;
+}
+
+/* Stat Cards */
+.peoplepulse-stat-card {
+    padding: 1.25rem;
+    border-radius: 12px;
+    background: var(--peoplepulse-card-bg);
+    border: 1px solid var(--peoplepulse-card-border);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    height: 100%;
+}
+
+.peoplepulse-stat-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.35rem;
+    flex-shrink: 0;
+}
+
+.peoplepulse-stat-icon.primary { background: #eef3ff; color: #1b4fc2; }
+.peoplepulse-stat-icon.success { background: #ecfdf5; color: #10b981; }
+.peoplepulse-stat-icon.warning { background: #fffbeb; color: #f59e0b; }
+.peoplepulse-stat-icon.danger { background: #fef2f2; color: #ef4444; }
+
+/* Status Badges */
+.badge-peoplepulse {
+    padding: 0.35rem 0.75rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: 0.3px;
+    display: inline-block;
+    white-space: nowrap;
+}
+
+.badge-present { background: #dcfce7; color: #15803d; }
+.badge-late { background: #fef3c7; color: #b45309; }
+.badge-halfday { background: #e0f2fe; color: #0369a1; }
+.badge-absent { background: #fee2e2; color: #b91c1c; }
+.badge-leave { background: #f1f5f9; color: #475569; }
+
+/* Responsive Table Wrapper */
+.table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.peoplepulse-table {
+    width: 100%;
+    margin-bottom: 0;
+    white-space: nowrap;
+}
+
+.peoplepulse-table thead th {
+    background: var(--peoplepulse-table-head-bg);
+    color: var(--peoplepulse-text-muted);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--peoplepulse-card-border);
+    padding: 0.85rem 1rem;
+}
+
+.peoplepulse-table tbody td {
+    padding: 0.85rem 1rem;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--peoplepulse-table-border);
+    font-size: 0.88rem;
+}
+
+.peoplepulse-table tbody tr:hover td {
+    background-color: var(--peoplepulse-table-hover);
+}
+
+/* ===================================================================
+   RESPONSIVE BREAKPOINTS (Mobile, Tablet, Desktop)
+   =================================================================== */
+
+/* Backdrop overlay when mobile sidebar is open */
+.sidebar-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(2px);
+    z-index: 1040;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease, visibility 0.25s ease;
+}
+
+.sidebar-backdrop.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Tablets and Mobile screens (< 992px) */
+@media (max-width: 991.98px) {
+    .peoplepulse-sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        width: 270px;
+        transform: translateX(-100%);
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .peoplepulse-sidebar.show {
+        transform: translateX(0);
+    }
+
+    .peoplepulse-topbar {
+        padding: 0.75rem 1rem;
+    }
+
+    .peoplepulse-main main {
+        padding: 1rem !important;
+    }
+
+    .peoplepulse-card-body {
+        padding: 1rem;
+    }
+}
+
+/* Small mobile phones (< 576px) */
+@media (max-width: 575.98px) {
+    body {
+        font-size: 0.85rem;
+    }
+
+    .peoplepulse-topbar {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        height: auto;
+    }
+
+    .peoplepulse-sign-in-widget {
+        padding: 1.25rem 0.85rem;
+    }
+
+    .peoplepulse-clock-circle {
+        font-size: 1.15rem;
+        padding: 0.4rem 1rem;
+    }
+
+    .peoplepulse-card-header {
+        padding: 0.85rem 1rem;
+    }
+
+    .peoplepulse-stat-card {
+        padding: 1rem;
+    }
+
+    .peoplepulse-stat-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1.15rem;
+    }
+
+    .modal-dialog {
+        margin: 0.5rem;
+    }
+
+    .modal-body {
+        padding: 1rem !important;
+    }
+
+    .timesheet-progress-bar {
+        height: 8px;
+    }
+
+    .slip-card {
+        margin: 1rem 0.5rem !important;
+        padding: 1.25rem !important;
+    }
+}
+
+/* ===================================================================
+   MOBILE ZERO-HORIZONTAL-SCROLL ENGINE
+   Transforms wide tabular muster logs into native mobile card widgets
+   Eliminates all horizontal scrolling on smartphones and small tablets
+   =================================================================== */
+
+html, body {
+    max-width: 100vw;
+    overflow-x: hidden;
+}
+
+.peoplepulse-wrapper,
+.peoplepulse-main,
+.peoplepulse-main main {
+    max-width: 100vw;
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
+
+/* Responsive Table-to-Card Transformation for Mobile */
+@media (max-width: 767.98px) {
+    /* Hide the traditional table header row on mobile */
+    .table-mobile-card thead {
+        display: none !important;
+    }
+
+    /* Transform table elements into clean vertical blocks */
+    .table-mobile-card,
+    .table-mobile-card tbody,
+    .table-mobile-card tr,
+    .table-mobile-card td {
+        display: block !important;
+        width: 100% !important;
+        box-sizing: border-box;
+    }
+
+    /* Each row becomes an individual card container */
+    .table-mobile-card tbody tr {
+        background: #ffffff;
+        border: 1px solid var(--peoplepulse-card-border) !important;
+        border-radius: 10px;
+        margin-bottom: 0.85rem;
+        padding: 0.75rem 0.95rem;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+    }
+
+    /* Each cell becomes a key-value row with label on left, value on right */
+    .table-mobile-card tbody td {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        text-align: right;
+        padding: 0.45rem 0 !important;
+        border: none !important;
+        border-bottom: 1px dashed #f1f5f9 !important;
+        white-space: normal !important;
+        font-size: 0.85rem;
+        min-height: 32px;
+        word-break: break-word;
+    }
+
+    .table-mobile-card tbody td:last-child {
+        border-bottom: none !important;
+        padding-bottom: 0 !important;
+    }
+
+    /* Automatic label generated from data-label attribute */
+    .table-mobile-card tbody td::before {
+        content: attr(data-label);
+        font-weight: 600;
+        color: var(--peoplepulse-text-muted);
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        text-align: left;
+        margin-right: 0.75rem;
+        flex-shrink: 0;
+    }
+
+    /* Align right-hand content properly */
+    .table-mobile-card tbody td > * {
+        text-align: right;
+    }
+
+    .table-mobile-card tbody td .d-flex {
+        justify-content: flex-end;
+    }
+
+    .table-mobile-card tbody td form {
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    .table-mobile-card tbody td select {
+        max-width: 180px !important;
+    }
+
+    /* Special treatment for empty row indicators */
+    .table-mobile-card tbody td[colspan] {
+        display: block !important;
+        text-align: center !important;
+        padding: 1.5rem 0.5rem !important;
+        border-bottom: none !important;
+    }
+
+    .table-mobile-card tbody td[colspan]::before {
+        display: none !important;
+    }
+
+    /* Avoid double borders on mobile card wrapper */
+    .peoplepulse-card > .table-responsive {
+        padding: 0.25rem 0.5rem;
+        background: transparent;
+        overflow-x: hidden !important;
+    }
+}
+
+/* ===================================================================
+   DARK THEME COMPONENT & UTILITY OVERRIDES
+   =================================================================== */
+
+/* Theme Toggle Button */
+.theme-toggle-btn {
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.05rem;
+    color: var(--peoplepulse-text-muted);
+    border: 1px solid var(--peoplepulse-card-border);
+    background: transparent;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.theme-toggle-btn:hover {
+    color: var(--peoplepulse-primary);
+    border-color: var(--peoplepulse-primary);
+    background: var(--peoplepulse-primary-light);
+    transform: rotate(15deg);
+}
+
+[data-bs-theme="dark"] .theme-toggle-btn {
+    color: #fde047;
+    border-color: #475569;
+}
+
+[data-bs-theme="dark"] .theme-toggle-btn:hover {
+    background: rgba(253, 224, 71, 0.15);
+    border-color: #fde047;
+    color: #fef08a;
+    transform: rotate(15deg);
+}
+
+/* Dark mode specific surface styling */
+[data-bs-theme="dark"] .bg-white {
+    background-color: var(--peoplepulse-card-bg) !important;
+}
+
+[data-bs-theme="dark"] .bg-light {
+    background-color: #0f172a !important;
+}
+
+[data-bs-theme="dark"] .text-dark {
+    color: #f8fafc !important;
+}
+
+[data-bs-theme="dark"] .text-secondary {
+    color: #94a3b8 !important;
+}
+
+[data-bs-theme="dark"] .border {
+    border-color: var(--peoplepulse-card-border) !important;
+}
+
+[data-bs-theme="dark"] .modal-content {
+    background-color: var(--peoplepulse-card-bg) !important;
+    color: var(--peoplepulse-text-dark) !important;
+    border: 1px solid var(--peoplepulse-card-border) !important;
+}
+
+[data-bs-theme="dark"] .form-control,
+[data-bs-theme="dark"] .form-select {
+    background-color: var(--peoplepulse-input-bg) !important;
+    border-color: var(--peoplepulse-input-border) !important;
+    color: var(--peoplepulse-text-dark) !important;
+}
+
+[data-bs-theme="dark"] .form-control:focus,
+[data-bs-theme="dark"] .form-select:focus {
+    background-color: var(--peoplepulse-input-bg) !important;
+    border-color: var(--peoplepulse-primary) !important;
+    color: var(--peoplepulse-text-dark) !important;
+}
+
+[data-bs-theme="dark"] .peoplepulse-sign-in-widget {
+    background: var(--peoplepulse-widget-bg) !important;
+    border-color: var(--peoplepulse-card-border) !important;
+}
+
+[data-bs-theme="dark"] .peoplepulse-quick-pill {
+    background: var(--peoplepulse-card-bg) !important;
+    border-color: var(--peoplepulse-card-border) !important;
+    color: var(--peoplepulse-text-dark) !important;
+}
+
+[data-bs-theme="dark"] .peoplepulse-quick-pill:hover {
+    background: rgba(59, 130, 246, 0.15) !important;
+    border-color: var(--peoplepulse-primary) !important;
+    color: var(--peoplepulse-primary) !important;
+}
+
+[data-bs-theme="dark"] .peoplepulse-clock-circle {
+    background: rgba(59, 130, 246, 0.2) !important;
+    color: #93c5fd !important;
+}
+
+[data-bs-theme="dark"] .badge-present { background: rgba(34, 197, 94, 0.2) !important; color: #86efac !important; border: 1px solid rgba(34, 197, 94, 0.3) !important; }
+[data-bs-theme="dark"] .badge-late { background: rgba(245, 158, 11, 0.2) !important; color: #fde047 !important; border: 1px solid rgba(245, 158, 11, 0.3) !important; }
+[data-bs-theme="dark"] .badge-halfday { background: rgba(14, 165, 233, 0.2) !important; color: #7dd3fc !important; border: 1px solid rgba(14, 165, 233, 0.3) !important; }
+[data-bs-theme="dark"] .badge-absent { background: rgba(239, 68, 68, 0.2) !important; color: #fca5a5 !important; border: 1px solid rgba(239, 68, 68, 0.3) !important; }
+[data-bs-theme="dark"] .badge-leave { background: rgba(148, 163, 184, 0.2) !important; color: #cbd5e1 !important; border: 1px solid rgba(148, 163, 184, 0.3) !important; }
+[data-bs-theme="dark"] .badge.bg-light { background-color: #334155 !important; color: #e2e8f0 !important; border-color: #475569 !important; }
+
+[data-bs-theme="dark"] .table-mobile-card tbody tr {
+    background: var(--peoplepulse-card-bg) !important;
+    border-color: var(--peoplepulse-card-border) !important;
+}
+
+[data-bs-theme="dark"] .table-mobile-card tbody td {
+    border-bottom: 1px dashed #334155 !important;
+    color: var(--peoplepulse-text-dark) !important;
+}
+
+[data-bs-theme="dark"] .slip-card {
+    background: var(--peoplepulse-card-bg) !important;
+    border-color: var(--peoplepulse-card-border) !important;
+    color: var(--peoplepulse-text-dark) !important;
+}
+
+[data-bs-theme="dark"] .login-box {
+    background: var(--peoplepulse-card-bg) !important;
+    border-color: var(--peoplepulse-card-border) !important;
+}
+
+[data-bs-theme="dark"] .navbar {
+    background-color: var(--peoplepulse-card-bg) !important;
+    border-color: var(--peoplepulse-card-border) !important;
+}
+
+/* ===================================================================
+   LEAVE BALANCE CARDS & HOLIDAY CALENDAR STYLING
+   =================================================================== */
+
+.leave-balance-card {
+    background: var(--peoplepulse-card-bg);
+    border: 1px solid var(--peoplepulse-card-border);
+    border-radius: 12px;
+    padding: 1.25rem;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.leave-balance-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.leave-balance-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+}
+
+.leave-balance-card.cl::before { background: #3b82f6; }
+.leave-balance-card.sl::before { background: #10b981; }
+.leave-balance-card.el::before { background: #8b5cf6; }
+.leave-balance-card.comp::before { background: #f59e0b; }
+.leave-balance-card.lop::before { background: #ef4444; }
+
+.holiday-date-badge {
+    width: 52px;
+    height: 52px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    line-height: 1.1;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, var(--peoplepulse-primary-light), rgba(59, 130, 246, 0.1));
+    color: var(--peoplepulse-primary);
+    border: 1px solid rgba(27, 79, 194, 0.15);
+}
+
+[data-bs-theme="dark"] .holiday-date-badge {
+    background: rgba(59, 130, 246, 0.2);
+    border-color: rgba(59, 130, 246, 0.3);
+    color: #93c5fd;
+}
+
+.holiday-date-badge .month {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+}
+
+.holiday-date-badge .day {
+    font-size: 1.25rem;
+    font-weight: 800;
+}
+
+/* ===================================================================
+   PEOPLE+ HR MOBILE APP BOTTOM NAVIGATION & TAB ARCHITECTURE
+   Native HR mobile app interface experience (Home, Action, Explore, Engage)
+   =================================================================== */
+
+.mobile-app-bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 64px;
+    background: #ffffff;
+    border-top: 1px solid rgba(226, 232, 240, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    z-index: 1045;
+    box-shadow: 0 -3px 16px rgba(15, 23, 42, 0.08);
+    padding: 0 0.5rem;
+    padding-bottom: env(safe-area-inset-bottom, 0);
+    backdrop-filter: blur(10px);
+}
+
+[data-bs-theme="dark"] .mobile-app-bottom-nav {
+    background: #0f172a;
+    border-top-color: #1e293b;
+    box-shadow: 0 -3px 16px rgba(0, 0, 0, 0.45);
+}
+
+.mobile-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    text-decoration: none !important;
+    color: #64748b;
+    font-size: 0.72rem;
+    font-weight: 500;
+    height: 100%;
+    padding: 0.35rem 0.25rem;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.mobile-nav-item:hover {
+    color: var(--peoplepulse-primary);
+}
+
+.mobile-nav-item.active {
+    color: var(--peoplepulse-primary);
+    font-weight: 700;
+}
+
+.mobile-nav-item.active::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 20%;
+    right: 20%;
+    height: 3px;
+    background: var(--peoplepulse-primary);
+    border-radius: 0 0 4px 4px;
+    box-shadow: 0 1px 4px rgba(27, 79, 194, 0.4);
+}
+
+[data-bs-theme="dark"] .mobile-nav-item {
+    color: #94a3b8;
+}
+
+[data-bs-theme="dark"] .mobile-nav-item.active {
+    color: #60a5fa;
+}
+
+[data-bs-theme="dark"] .mobile-nav-item.active::before {
+    background: #60a5fa;
+    box-shadow: 0 1px 6px rgba(96, 165, 250, 0.5);
+}
+
+.mobile-nav-icon-wrapper {
+    position: relative;
+    font-size: 1.35rem;
+    line-height: 1;
+    margin-bottom: 2px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease;
+}
+
+.mobile-nav-item.active .mobile-nav-icon-wrapper {
+    transform: translateY(-2px);
+}
+
+.mobile-nav-badge {
+    position: absolute;
+    top: -4px;
+    right: -8px;
+    background: #ef4444;
+    color: #ffffff;
+    font-size: 0.58rem;
+    font-weight: 700;
+    border-radius: 10px;
+    padding: 1px 4px;
+    line-height: 1.1;
+    box-shadow: 0 1px 3px rgba(239, 68, 68, 0.4);
+}
+
+.mobile-nav-dot {
+    position: absolute;
+    top: -1px;
+    right: -3px;
+    width: 8px;
+    height: 8px;
+    background: #ff5e3a;
+    border-radius: 50%;
+    border: 2px solid #ffffff;
+}
+
+[data-bs-theme="dark"] .mobile-nav-dot {
+    border-color: #0f172a;
+}
+
+/* Tab panes switching rules */
+@media (max-width: 991.98px) {
+    .peoplepulse-main {
+        padding-bottom: 76px !important;
+    }
+
+    .mobile-tab-pane {
+        display: none;
+    }
+
+    .mobile-tab-pane.active {
+        display: block;
+        animation: mobileTabFadeIn 0.22s ease-out;
+    }
+}
+
+@media (min-width: 992px) {
+    .mobile-app-bottom-nav {
+        display: none !important;
+    }
+
+    .mobile-tab-pane {
+        display: block;
+    }
+
+    #mobileTab-action,
+    #mobileTab-explore,
+    #mobileTab-engage {
+        display: none !important;
+    }
+}
+
+@keyframes mobileTabFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Explore Card Directory Grid */
+.explore-feature-card {
+    background: var(--peoplepulse-card-bg);
+    border: 1px solid var(--peoplepulse-card-border);
+    border-radius: 12px;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    text-decoration: none !important;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+    height: 100%;
+}
+
+.explore-feature-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+    border-color: var(--peoplepulse-primary);
+}
+
+.explore-feature-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+
+/* Engage Pulse Reaction Button */
+.engage-pulse-btn {
+    flex: 1;
+    min-width: 70px;
+    padding: 0.75rem 0.5rem;
+    border-radius: 12px;
+    border: 1px solid var(--peoplepulse-card-border);
+    background: var(--peoplepulse-card-bg);
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+.engage-pulse-btn:hover, .engage-pulse-btn.selected {
+    border-color: var(--peoplepulse-primary);
+    background: var(--peoplepulse-primary-light);
+    transform: scale(1.04);
+}
+
+[data-bs-theme="dark"] .engage-pulse-btn:hover,
+[data-bs-theme="dark"] .engage-pulse-btn.selected {
+    background: rgba(59, 130, 246, 0.2);
+}
+
+.mobile-banner-card {
+    background: linear-gradient(135deg, #1b4fc2 0%, #0a1a44 100%);
+    border-radius: 14px;
+    color: #ffffff;
+    padding: 1.2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.mobile-banner-card::after {
+    content: '';
+    position: absolute;
+    right: -20px;
+    top: -20px;
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.06);
+    pointer-events: none;
+}
+
+
+
+
+
