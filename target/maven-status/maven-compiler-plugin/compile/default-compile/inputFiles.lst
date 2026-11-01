@@ -46,6 +46,7 @@ D:\Atish2\PeoplePulseHR\src\main\java\com\atish\attendance\util\GeoUtils.java
 D:\Atish2\PeoplePulseHR\src\main\java\com\atish\attendance\service\DemoBookingService.java
 D:\Atish2\PeoplePulseHR\src\main\java\com\atish\attendance\repository\DemoBookingRepository.java
 D:\Atish2\PeoplePulseHR\src\main\java\com\atish\attendance\config\CustomAuthenticationSuccessHandler.java
+D:\Atish2\PeoplePulseHR\src\main\java\com\atish\attendance\config\WebConfig.java
 D:\Atish2\PeoplePulseHR\src\main\java\com\atish\attendance\dto\LeaveApplyDto.java
 D:\Atish2\PeoplePulseHR\src\main\java\com\atish\attendance\entity\DemoStatus.java
 D:\Atish2\PeoplePulseHR\src\main\java\com\atish\attendance\entity\SystemSetting.java
