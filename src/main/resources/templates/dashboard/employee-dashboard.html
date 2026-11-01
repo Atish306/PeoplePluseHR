@@ -44,32 +44,37 @@
             </div>
 
             <ul class="peoplepulse-nav">
-                <li class="peoplepulse-nav-heading">Workspace</li>
+                <li class="peoplepulse-nav-heading" th:text="#{nav.workspace}">Workspace</li>
                 <li class="peoplepulse-nav-item">
                     <a href="/dashboard" class="peoplepulse-nav-link active">
-                        <i class="bi bi-grid-1x2"></i> Dashboard
+                        <i class="bi bi-grid-1x2"></i> <span th:text="#{nav.dashboard}">Dashboard</span>
                     </a>
                 </li>
                 <li class="peoplepulse-nav-item">
                     <a href="/notifications" class="peoplepulse-nav-link">
-                        <i class="bi bi-bell"></i> Notifications
+                        <i class="bi bi-bell"></i> <span th:text="#{nav.notifications}">Notifications</span>
                     </a>
                 </li>
                 <li class="peoplepulse-nav-item">
                     <a href="/attendance/history" class="peoplepulse-nav-link">
-                        <i class="bi bi-calendar3"></i> Attendance Log
+                        <i class="bi bi-calendar3"></i> <span th:text="#{nav.attendance}">Attendance Log</span>
+                    </a>
+                </li>
+                <li class="peoplepulse-nav-item">
+                    <a href="/regularization/apply" class="peoplepulse-nav-link">
+                        <i class="bi bi-clock-history"></i> <span th:text="#{nav.regularization}">Regularize Attendance</span>
                     </a>
                 </li>
 
-                <li class="peoplepulse-nav-heading">Time & Leave</li>
+                <li class="peoplepulse-nav-heading" th:text="#{nav.leaves}">Time & Leave</li>
                 <li class="peoplepulse-nav-item">
                     <a href="/leaves/apply" class="peoplepulse-nav-link">
-                        <i class="bi bi-calendar-plus"></i> Leave Balances
+                        <i class="bi bi-calendar-plus"></i> <span th:text="#{nav.leaves}">Leave Balances</span>
                     </a>
                 </li>
                 <li class="peoplepulse-nav-item">
                     <a href="/holidays" class="peoplepulse-nav-link">
-                        <i class="bi bi-calendar-heart"></i> Holiday Calendar
+                        <i class="bi bi-calendar-heart"></i> <span th:text="#{nav.holidays}">Holiday Calendar</span>
                     </a>
                 </li>
             </ul>
@@ -109,6 +114,30 @@
                     </div>
                 </div>
                 <div class="d-flex align-items-center gap-2">
+                    <!-- Language Selector Dropdown -->
+                    <div class="dropdown">
+                        <button class="btn btn-outline-secondary btn-sm rounded-pill dropdown-toggle px-3" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-translate me-1"></i>
+                            <span th:text="#{lang.current}">Language</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3">
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center justify-content-between" href="javascript:void(0)" onclick="switchLanguage('en')">
+                                    <span>🇬🇧 English</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center justify-content-between" href="javascript:void(0)" onclick="switchLanguage('hi')">
+                                    <span>🇮🇳 हिन्दी (Hindi)</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center justify-content-between" href="javascript:void(0)" onclick="switchLanguage('mr')">
+                                    <span>🇮🇳 मराठी (Marathi)</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                     <a href="/notifications" class="btn btn-outline-secondary btn-sm rounded-circle position-relative" title="View Notifications">
                         <i class="bi bi-bell-fill"></i>
                     </a>
@@ -1310,6 +1339,12 @@
                     showMobileToast(`<i class="bi bi-building me-2 fs-5"></i> Work mode set to Office Desk.`, 'bg-primary');
                 }
             }
+        }
+
+        function switchLanguage(lang) {
+            const url = new URL(window.location.href);
+            url.searchParams.set('lang', lang);
+            window.location.href = url.toString();
         }
 
         // Open Kudos Modal

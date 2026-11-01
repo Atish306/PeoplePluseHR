@@ -12,6 +12,15 @@ if not exist "%~dp0tools\maven\bin\mvn.cmd" (
     powershell -ExecutionPolicy Bypass -File "%~dp0setup-maven.ps1"
 )
 
-echo Starting Spring Boot application on http://localhost:8085 ...
-"%~dp0tools\maven\bin\mvn.cmd" spring-boot:run
+for /f "tokens=*" %%a in ('powershell -Command "(Get-NetIPAddress -AddressFamily IPv4 | Where-Object { $_.InterfaceAlias -notlike '*Loopback*' -and $_.IPAddress -notlike '169.254*' } | Select-Object -First 1).IPAddress"') do set MY_LAN_IP=%%a
+
+echo.
+echo Local PC Access:    http://localhost:8085
+if defined MY_LAN_IP (
+    echo Mobile / LAN URL:   http://%MY_LAN_IP%:8085
+)
+echo ========================================================
+echo.
+
+"%~dp0tools\maven\bin\mvn.cmd" spring-boot:run -Dspring-boot.run.jvmArguments="-Djava.net.preferIPv4Stack=true"
 pause

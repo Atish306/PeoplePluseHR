@@ -44,42 +44,47 @@
             </div>
 
             <ul class="peoplepulse-nav">
-                <li class="peoplepulse-nav-heading">Administration</li>
+                <li class="peoplepulse-nav-heading" th:text="#{nav.administration}">Administration</li>
                 <li class="peoplepulse-nav-item">
                     <a href="/admin/dashboard" class="peoplepulse-nav-link active">
-                        <i class="bi bi-speedometer2"></i> Overview
+                        <i class="bi bi-speedometer2"></i> <span th:text="#{nav.overview}">Overview</span>
                     </a>
                 </li>
                 <li class="peoplepulse-nav-item">
                     <a href="/admin/employees" class="peoplepulse-nav-link">
-                        <i class="bi bi-people"></i> Employees & Excel
+                        <i class="bi bi-people"></i> <span th:text="#{nav.employees}">Employees & Excel</span>
                     </a>
                 </li>
                 <li class="peoplepulse-nav-item">
                     <a href="/admin/demo-bookings" class="peoplepulse-nav-link">
-                        <i class="bi bi-calendar-event"></i> Demo Requests
+                        <i class="bi bi-calendar-event"></i> <span th:text="#{nav.demo_requests}">Demo Requests</span>
                     </a>
                 </li>
                 <li class="peoplepulse-nav-item">
                     <a href="/admin/shifts" class="peoplepulse-nav-link">
-                        <i class="bi bi-calendar-range"></i> Shift Roster
+                        <i class="bi bi-calendar-range"></i> <span th:text="#{nav.shifts}">Shift Roster</span>
                     </a>
                 </li>
                 <li class="peoplepulse-nav-item">
                     <a href="/manager/leaves" class="peoplepulse-nav-link">
-                        <i class="bi bi-calendar-check"></i> Leave Review
+                        <i class="bi bi-calendar-check"></i> <span th:text="#{nav.leave_review}">Leave Review</span>
+                    </a>
+                </li>
+                <li class="peoplepulse-nav-item">
+                    <a href="/manager/regularization" class="peoplepulse-nav-link">
+                        <i class="bi bi-clock-history"></i> <span th:text="#{nav.regularization_manage}">Regularization Approvals</span>
                     </a>
                 </li>
                 <li class="peoplepulse-nav-item">
                     <a href="/holidays" class="peoplepulse-nav-link">
-                        <i class="bi bi-calendar-heart"></i> Holiday Calendar
+                        <i class="bi bi-calendar-heart"></i> <span th:text="#{nav.holidays}">Holiday Calendar</span>
                     </a>
                 </li>
 
-                <li class="peoplepulse-nav-heading">Reports & Payroll</li>
+                <li class="peoplepulse-nav-heading" th:text="#{nav.reports}">Reports & Payroll</li>
                 <li class="peoplepulse-nav-item">
                     <a href="/reports/summary" class="peoplepulse-nav-link">
-                        <i class="bi bi-file-earmark-spreadsheet"></i> Timesheets & Export
+                        <i class="bi bi-file-earmark-spreadsheet"></i> <span th:text="#{nav.timesheets}">Timesheets & Export</span>
                     </a>
                 </li>
                 <li class="peoplepulse-nav-item">
@@ -131,6 +136,30 @@
                     </div>
                 </div>
                 <div class="d-flex align-items-center gap-2 flex-wrap">
+                    <!-- Language Selector Dropdown -->
+                    <div class="dropdown">
+                        <button class="btn btn-outline-secondary btn-sm rounded-pill dropdown-toggle px-3" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-translate me-1"></i>
+                            <span th:text="#{lang.current}">Language</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3">
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center justify-content-between" href="javascript:void(0)" onclick="switchLanguage('en')">
+                                    <span>🇬🇧 English</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center justify-content-between" href="javascript:void(0)" onclick="switchLanguage('hi')">
+                                    <span>🇮🇳 हिन्दी (Hindi)</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item d-flex align-items-center justify-content-between" href="javascript:void(0)" onclick="switchLanguage('mr')">
+                                    <span>🇮🇳 मराठी (Marathi)</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                     <button type="button" class="btn btn-outline-secondary btn-sm rounded-circle theme-toggle-btn" onclick="toggleTheme()" aria-label="Toggle theme" title="Toggle Light/Dark Theme">
                         <i class="bi bi-moon-stars-fill theme-icon-dark"></i>
                         <i class="bi bi-sun-fill theme-icon-light d-none"></i>
@@ -178,7 +207,7 @@
                                 <i class="bi bi-people-fill"></i>
                             </div>
                             <div>
-                                <span class="text-muted small fw-semibold text-uppercase">Total Employees</span>
+                                <span class="text-muted small fw-semibold text-uppercase" th:text="#{kpi.total_employees}">Total Employees</span>
                                 <h3 class="fw-bold text-dark mb-0" th:text="${totalUsers}">3</h3>
                             </div>
                         </div>
@@ -189,7 +218,7 @@
                                 <i class="bi bi-check2-circle"></i>
                             </div>
                             <div>
-                                <span class="text-muted small fw-semibold text-uppercase">Present Today</span>
+                                <span class="text-muted small fw-semibold text-uppercase" th:text="#{kpi.present_today}">Present Today</span>
                                 <h3 class="fw-bold text-success mb-0" th:text="${presentCount}">1</h3>
                             </div>
                         </div>
@@ -200,7 +229,7 @@
                                 <i class="bi bi-exclamation-triangle-fill"></i>
                             </div>
                             <div>
-                                <span class="text-muted small fw-semibold text-uppercase">Late Arrivals</span>
+                                <span class="text-muted small fw-semibold text-uppercase" th:text="#{kpi.late_arrivals}">Late Arrivals</span>
                                 <h3 class="fw-bold text-warning mb-0" th:text="${lateCount}">0</h3>
                             </div>
                         </div>
@@ -211,7 +240,7 @@
                                 <i class="bi bi-x-circle-fill"></i>
                             </div>
                             <div>
-                                <span class="text-muted small fw-semibold text-uppercase">Absent / Missing</span>
+                                <span class="text-muted small fw-semibold text-uppercase" th:text="#{kpi.absent}">Absent / Missing</span>
                                 <h3 class="fw-bold text-danger mb-0" th:text="${absentCount}">0</h3>
                             </div>
                         </div>
@@ -287,5 +316,12 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script th:src="@{/js/responsive.js}"></script>
+    <script>
+        function switchLanguage(lang) {
+            const url = new URL(window.location.href);
+            url.searchParams.set('lang', lang);
+            window.location.href = url.toString();
+        }
+    </script>
 </body>
 </html>
