@@ -10998,3 +10998,178 @@ Caused by: java.lang.ClassNotFoundException: org.springframework.mail.javamail.J
 --------------------------------------------------------------------------------
 2026-11-01 17:50:31.916 INFO  [REQ-72867E7B] c.a.a.logging.EndpointDebugService - [REQ-72867E7B] POST /auth/otp/send -> Status 200 (23ms)
 2026-11-01 17:51:19.099 INFO  [REQ-C1B9A6CF] c.a.a.logging.EndpointDebugService - [REQ-C1B9A6CF] GET /book-demo -> Status 200 (297ms)
+2026-11-01 20:11:00.595 WARN  [NO-TRACE] com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Thread starvation or clock leap detected (housekeeper delta=1h48m1s37ms288µs600ns).
+2026-11-01 20:18:21.505 INFO  [REQ-32A4ADD6] c.a.a.logging.EndpointDebugService - [REQ-32A4ADD6] GET /login -> Status 200 (28ms)
+2026-11-01 20:18:22.010 INFO  [REQ-FBE1F195] c.a.a.logging.EndpointDebugService - [REQ-FBE1F195] GET /login -> Status 200 (13ms)
+2026-11-01 20:25:15.477 INFO  [REQ-C4A34AC5] c.a.a.logging.EndpointDebugService - [REQ-C4A34AC5] POST /login -> Status 302 (114ms)
+2026-11-01 20:25:15.540 INFO  [REQ-8103C40E] c.a.a.logging.EndpointDebugService - [REQ-8103C40E] GET /admin/dashboard -> Status 200 (58ms)
+2026-11-01 20:25:29.475 INFO  [REQ-3BBBD876] c.a.a.logging.EndpointDebugService - [REQ-3BBBD876] GET /admin/employees -> Status 200 (49ms)
+2026-11-01 20:25:42.901 INFO  [REQ-1D16D935] c.a.a.logging.EndpointDebugService - [REQ-1D16D935] POST /admin/employees/import-excel -> Status 302 (411ms)
+2026-11-01 20:25:42.926 INFO  [REQ-48B7FD6C] c.a.a.logging.EndpointDebugService - [REQ-48B7FD6C] GET /admin/employees -> Status 200 (19ms)
+2026-11-01 20:26:05.140 INFO  [REQ-9DBDA2DF] c.a.a.logging.EndpointDebugService - [REQ-9DBDA2DF] GET /reports/summary -> Status 200 (181ms)
+2026-11-01 20:26:08.305 INFO  [REQ-68C76FBC] c.a.a.logging.EndpointDebugService - [REQ-68C76FBC] GET /admin/dashboard -> Status 200 (40ms)
+2026-11-01 20:26:12.070 INFO  [REQ-0F109EBD] c.a.a.logging.EndpointDebugService - [REQ-0F109EBD] GET /admin/debug/logs -> Status 200 (306ms)
+2026-11-01 20:26:19.351 ERROR [REQ-A81842F7] EndpointLogger - 
+================================================================================
+!!! [ERROR BUG DETECTED] 2026-11-01 20:26:19.348 | Trace: [REQ-A81842F7]
+================================================================================
+    Endpoint / Action : GET /admin/debug/test-custom-logger?action=error
+    User Context      : admin (ROLE_ADMIN)
+    Error Summary     : Simulated error via CustomLogger.printErrorLog
+--------------------------------------------------------------------------------
+    Exception Type    : java.lang.IllegalArgumentException
+    Root Message      : Sample deliberate exception for printErrorLog testing
+    Stack Trace (Application Frames):
+        at com.atish.attendance.controller.DebugController.testCustomLogger(DebugController.java:70)
+        at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+        at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+        at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:205)
+        at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:150)
+        at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:117)
+        at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:895)
+        at com.atish.attendance.logging.EndpointDebugFilter.doFilterInternal(EndpointDebugFilter.java:73)
+
+================================================================================
+2026-11-01 20:26:19.360 INFO  [REQ-A81842F7] c.a.a.logging.EndpointDebugService - [REQ-A81842F7] GET /admin/debug/test-custom-logger -> Status 302 (15ms)
+2026-11-01 20:26:19.383 INFO  [REQ-B2C9C802] c.a.a.logging.EndpointDebugService - [REQ-B2C9C802] GET /admin/debug/logs -> Status 200 (14ms)
+2026-11-01 20:26:25.808 INFO  [REQ-9356EF27] EndpointLogger - 
+--------------------------------------------------------------------------------
+>>> [SUCCESS] 2026-11-01 20:26:25.806 | Trace: [REQ-9356EF27]
+    Endpoint / Action : GET /admin/debug/test-custom-logger?action=success
+    User              : admin (ROLE_ADMIN)
+    Execution Latency : 18 ms
+    Message           : Sample successful operation recorded via CustomLogger.printSuccessLog
+    Details / Data    : {sampleKey=sampleValue}
+--------------------------------------------------------------------------------
+2026-11-01 20:26:25.810 INFO  [REQ-9356EF27] c.a.a.logging.EndpointDebugService - [REQ-9356EF27] GET /admin/debug/test-custom-logger -> Status 302 (6ms)
+2026-11-01 20:26:26.018 INFO  [REQ-B106AE8E] c.a.a.logging.EndpointDebugService - [REQ-B106AE8E] GET /admin/debug/logs -> Status 200 (197ms)
+2026-11-01 20:28:09.277 INFO  [REQ-72D4BFCF] c.a.a.logging.EndpointDebugService - [REQ-72D4BFCF] GET /admin/dashboard -> Status 200 (49ms)
+2026-11-01 20:28:17.266 INFO  [REQ-E4E39EAE] c.a.a.logging.EndpointDebugService - [REQ-E4E39EAE] GET /admin/employees -> Status 200 (25ms)
+2026-11-01 20:30:30.470 INFO  [REQ-555F3FC6] c.a.a.logging.EndpointDebugService - [REQ-555F3FC6] POST /admin/employees/import-excel -> Status 302 (132ms)
+2026-11-01 20:30:30.499 INFO  [REQ-6C82D5BF] c.a.a.logging.EndpointDebugService - [REQ-6C82D5BF] GET /admin/employees -> Status 200 (23ms)
+2026-11-01 20:31:16.382 INFO  [REQ-8AFCA7DE] c.a.a.logging.EndpointDebugService - [REQ-8AFCA7DE] POST /logout -> Status 302 (4ms)
+2026-11-01 20:31:16.416 INFO  [REQ-1698600C] c.a.a.logging.EndpointDebugService - [REQ-1698600C] GET /login -> Status 200 (18ms)
+2026-11-01 20:31:29.863 INFO  [REQ-89B77CF5] EndpointLogger - 
+--------------------------------------------------------------------------------
+>>> [SUCCESS] 2026-11-01 20:31:29.863 | Trace: [REQ-89B77CF5]
+    Endpoint / Action : OtpAuthService.MobileSMS
+    User              : anonymous
+    Execution Latency : 0 ms
+    Message           : Dispatched Login OTP via SMS
+    Details / Data    : {mobile=7607774318, otpCode=875364, channel=SMS_GATEWAY (Simulated), employee=atish chauhan}
+--------------------------------------------------------------------------------
+2026-11-01 20:31:29.864 INFO  [REQ-89B77CF5] EndpointLogger - 
+--------------------------------------------------------------------------------
+>>> [SUCCESS] 2026-11-01 20:31:29.864 | Trace: [REQ-89B77CF5]
+    Endpoint / Action : OtpAuthService.sendOtp
+    User              : anonymous
+    Execution Latency : 0 ms
+    Message           : Generated Portal Login OTP
+    Details / Data    : {expiresIn=5 minutes, identifier=7607774318, otpCode=875364, user=atish}
+--------------------------------------------------------------------------------
+2026-11-01 20:31:29.875 INFO  [REQ-89B77CF5] c.a.a.logging.EndpointDebugService - [REQ-89B77CF5] POST /auth/otp/send -> Status 200 (35ms)
+2026-11-01 20:32:44.623 INFO  [REQ-AEF3EA52] c.a.a.logging.EndpointDebugService - [REQ-AEF3EA52] POST /auth/otp/verify -> Status 200 (15ms)
+2026-11-01 20:33:17.358 INFO  [REQ-225EB124] c.a.a.logging.EndpointDebugService - [REQ-225EB124] POST /auth/otp/verify -> Status 200 (10ms)
+2026-11-01 20:33:19.020 INFO  [REQ-6C022125] EndpointLogger - 
+--------------------------------------------------------------------------------
+>>> [SUCCESS] 2026-11-01 20:33:19.019 | Trace: [REQ-6C022125]
+    Endpoint / Action : OtpAuthService.MobileSMS
+    User              : anonymous
+    Execution Latency : 0 ms
+    Message           : Dispatched Login OTP via SMS
+    Details / Data    : {mobile=7607774318, otpCode=146100, channel=SMS_GATEWAY (Simulated), employee=atish chauhan}
+--------------------------------------------------------------------------------
+2026-11-01 20:33:19.020 INFO  [REQ-6C022125] EndpointLogger - 
+--------------------------------------------------------------------------------
+>>> [SUCCESS] 2026-11-01 20:33:19.020 | Trace: [REQ-6C022125]
+    Endpoint / Action : OtpAuthService.sendOtp
+    User              : anonymous
+    Execution Latency : 0 ms
+    Message           : Generated Portal Login OTP
+    Details / Data    : {expiresIn=5 minutes, identifier=7607774318, otpCode=146100, user=atish}
+--------------------------------------------------------------------------------
+2026-11-01 20:33:19.028 INFO  [REQ-6C022125] c.a.a.logging.EndpointDebugService - [REQ-6C022125] POST /auth/otp/send -> Status 200 (19ms)
+2026-11-01 20:33:36.913 INFO  [REQ-0B5FBAD7] c.a.a.logging.EndpointDebugService - [REQ-0B5FBAD7] GET /admin/demo-bookings -> Status 302 (24ms)
+2026-11-01 20:33:36.916 INFO  [REQ-F8621C51] c.a.a.logging.EndpointDebugService - [REQ-F8621C51] GET /login -> Status 200 (32ms)
+2026-11-01 20:33:36.950 INFO  [REQ-475E60F3] c.a.a.logging.EndpointDebugService - [REQ-475E60F3] GET /login -> Status 200 (10ms)
+2026-11-01 20:33:45.010 INFO  [REQ-E9210986] EndpointLogger - 
+--------------------------------------------------------------------------------
+>>> [SUCCESS] 2026-11-01 20:33:45.010 | Trace: [REQ-E9210986]
+    Endpoint / Action : OtpAuthService.verifyOtpAndLogin
+    User              : atish (ROLE_EMPLOYEE)
+    Execution Latency : 0 ms
+    Message           : Employee verified OTP and authenticated successfully
+    Details / Data    : {role=ROLE_EMPLOYEE, redirectUrl=/dashboard, username=atish}
+--------------------------------------------------------------------------------
+2026-11-01 20:33:45.034 INFO  [REQ-E9210986] c.a.a.logging.EndpointDebugService - [REQ-E9210986] POST /auth/otp/verify -> Status 200 (54ms)
+2026-11-01 20:33:45.858 INFO  [REQ-C0C7214F] c.a.a.logging.EndpointDebugService - [REQ-C0C7214F] GET /dashboard -> Status 200 (278ms)
+2026-11-01 20:34:17.722 ERROR [REQ-184025D7] EndpointLogger - 
+================================================================================
+!!! [ERROR BUG DETECTED] 2026-11-01 20:34:17.721 | Trace: [REQ-184025D7]
+================================================================================
+    Endpoint / Action : POST /attendance/punch-in
+    User Context      : atish (ROLE_EMPLOYEE)
+    Error Summary     : Punch rejected: GPS location is required to verify office presence. Please allow browser location permissions.
+
+================================================================================
+2026-11-01 20:34:17.802 ERROR [REQ-184025D7] EndpointLogger - 
+================================================================================
+!!! [ERROR BUG DETECTED] 2026-11-01 20:34:17.771 | Trace: [REQ-184025D7]
+================================================================================
+    Endpoint / Action : POST /attendance/punch-in
+    User Context      : atish (ROLE_EMPLOYEE)
+    Error Summary     : Punch in failed for user atish: Punch rejected: GPS location is required to verify office presence. Please allow browser location permissions.
+    Request / Payload : com.atish.attendance.dto.PunchRequest@45925cab
+--------------------------------------------------------------------------------
+    Exception Type    : java.lang.IllegalStateException
+    Root Message      : Punch rejected: GPS location is required to verify office presence. Please allow browser location permissions.
+    Stack Trace (Application Frames):
+        at com.atish.attendance.service.AttendanceService.recordPunchIn(AttendanceService.java:85)
+        at com.atish.attendance.service.AttendanceService$$FastClassBySpringCGLIB$$f650e4de.invoke(<generated>)
+        at org.springframework.cglib.proxy.MethodProxy.invoke(MethodProxy.java:218)
+        at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.invokeJoinpoint(CglibAopProxy.java:792)
+        at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163)
+        at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:762)
+        at org.springframework.transaction.interceptor.TransactionInterceptor$1.proceedWithInvocation(TransactionInterceptor.java:123)
+        at com.atish.attendance.service.AttendanceService$$EnhancerBySpringCGLIB$$2c3484a5.recordPunchIn(<generated>)
+        at com.atish.attendance.controller.AttendanceController.punchIn(AttendanceController.java:50)
+        at com.atish.attendance.logging.EndpointDebugFilter.doFilterInternal(EndpointDebugFilter.java:73)
+
+================================================================================
+2026-11-01 20:34:17.814 INFO  [REQ-184025D7] c.a.a.logging.EndpointDebugService - [REQ-184025D7] POST /attendance/punch-in -> Status 302 (302ms)
+2026-11-01 20:34:17.993 INFO  [REQ-40391973] c.a.a.logging.EndpointDebugService - [REQ-40391973] GET /dashboard -> Status 200 (145ms)
+2026-11-01 20:35:15.546 ERROR [REQ-E24BC413] EndpointLogger - 
+================================================================================
+!!! [ERROR BUG DETECTED] 2026-11-01 20:35:15.546 | Trace: [REQ-E24BC413]
+================================================================================
+    Endpoint / Action : POST /attendance/punch-in
+    User Context      : atish (ROLE_EMPLOYEE)
+    Error Summary     : Punch rejected: GPS location is required to verify office presence. Please allow browser location permissions.
+
+================================================================================
+2026-11-01 20:35:15.554 ERROR [REQ-E24BC413] EndpointLogger - 
+================================================================================
+!!! [ERROR BUG DETECTED] 2026-11-01 20:35:15.548 | Trace: [REQ-E24BC413]
+================================================================================
+    Endpoint / Action : POST /attendance/punch-in
+    User Context      : atish (ROLE_EMPLOYEE)
+    Error Summary     : Punch in failed for user atish: Punch rejected: GPS location is required to verify office presence. Please allow browser location permissions.
+    Request / Payload : com.atish.attendance.dto.PunchRequest@370a6344
+--------------------------------------------------------------------------------
+    Exception Type    : java.lang.IllegalStateException
+    Root Message      : Punch rejected: GPS location is required to verify office presence. Please allow browser location permissions.
+    Stack Trace (Application Frames):
+        at com.atish.attendance.service.AttendanceService.recordPunchIn(AttendanceService.java:85)
+        at com.atish.attendance.service.AttendanceService$$FastClassBySpringCGLIB$$f650e4de.invoke(<generated>)
+        at org.springframework.cglib.proxy.MethodProxy.invoke(MethodProxy.java:218)
+        at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.invokeJoinpoint(CglibAopProxy.java:792)
+        at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163)
+        at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:762)
+        at org.springframework.transaction.interceptor.TransactionInterceptor$1.proceedWithInvocation(TransactionInterceptor.java:123)
+        at com.atish.attendance.service.AttendanceService$$EnhancerBySpringCGLIB$$2c3484a5.recordPunchIn(<generated>)
+        at com.atish.attendance.controller.AttendanceController.punchIn(AttendanceController.java:50)
+        at com.atish.attendance.logging.EndpointDebugFilter.doFilterInternal(EndpointDebugFilter.java:73)
+
+================================================================================
+2026-11-01 20:35:15.559 INFO  [REQ-E24BC413] c.a.a.logging.EndpointDebugService - [REQ-E24BC413] POST /attendance/punch-in -> Status 302 (24ms)
+2026-11-01 20:35:15.697 INFO  [REQ-35E73B67] c.a.a.logging.EndpointDebugService - [REQ-35E73B67] GET /dashboard -> Status 200 (125ms)
